@@ -14,7 +14,7 @@ class TutorialMemory(db.Model):
     response_text = db.Column(db.Text)
     
     # Associated Media Asset
-    media_asset_id = db.Column(db.Integer, db.ForeignKey('media_asset.id'))
+    media_asset_id = db.Column(db.Integer, db.ForeignKey('media_assets.id'))
     media_asset = db.relationship('MediaAsset', backref='tutorial_memories')
     
     # Associated AI Requests
