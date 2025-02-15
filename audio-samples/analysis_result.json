@@ -1,0 +1,19 @@
+{
+  "conversation_analysis": [
+    {
+      "confidence": 0.9,
+      "diarization_html": "<strong>Speaker:</strong> Elijah Cornelius Arbee",
+      "summary": "Introduces himself.",
+      "timestamps_html": "<strong>Timestamps:</strong> 00:00-00:05",
+      "tone_analysis": {
+        "indicators": [
+          "clear pronunciation",
+          "normal speaking rate"
+        ],
+        "tone": "Neutral"
+      },
+      "transcription_html": "<strong>Transcription:</strong> Hi, my name is Elijah Cornelius Arbee."
+    }
+  ],
+  "full_audio_transcribed": true
+}

@@ -23,13 +23,8 @@ from dotenv import load_dotenv
 from utils.ai.gemini_chat_formatter import _format_chat_messages
 from utils.ai.extract_json_from_response import extract_json_from_response
 from utils.ai.json_prompt_types_loader import ConfigLoader
-from utils.ai.gemini_config import (
-    GeminiPart,
-    GeminiInlinePart,
-    GeminiContent,
-    GeminiRequest,
-    PromptSchema
-)
+from utils.ai.gemini_config import (GeminiPart, GeminiInlinePart,
+                                    GeminiContent, GeminiRequest, PromptSchema)
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -44,7 +39,10 @@ if not GOOGLE_API_KEY:
 genai.configure(api_key=GOOGLE_API_KEY)
 
 # Path to the configs directory
-CONFIGS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs') # 'v3' is removed with the mv to services from root
+CONFIGS_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    '/home/runner/workspace/configs'
+)  # 'v3' is removed with the mv to services from root
 
 # Initialize the ConfigLoader
 config_loader = ConfigLoader(CONFIGS_DIR)
@@ -58,8 +56,7 @@ for filename in os.listdir(CONFIGS_DIR):
         if config:
             PROMPTS_SCHEMAS[prompt_type] = PromptSchema(
                 prompt_text=config["prompt_text"],
-                response_schema=config["response_schema"]
-            )
+                response_schema=config["response_schema"])
             logger.info(f"Loaded configuration '{prompt_type}' successfully.")
         else:
             logger.error(f"Failed to load configuration for '{prompt_type}'.")
@@ -67,20 +64,20 @@ for filename in os.listdir(CONFIGS_DIR):
 
 # Update the function signature
 def process_with_gemini(
-    uploaded_files: Union[List[GeminiRequest], GeminiRequest],
-    prompt_type: str = "default_transcription",
-    model_name: str = "gemini-1.5-flash",
-    temperature: float = 1.0,
-    top_p: float = 0.95,
-    top_k: int = 40,
-    max_output_tokens: int = 8192,
-    step_variables: Dict[str, Any] = None
-) -> Dict[str, Any]:
+        uploaded_files: Union[List[GeminiRequest], GeminiRequest],
+        prompt_type: str = "default_transcription",
+        model_name: str = "gemini-1.5-flash",
+        temperature: float = 1.0,
+        top_p: float = 0.95,
+        top_k: int = 40,
+        max_output_tokens: int = 8192,
+        step_variables: Dict[str, Any] = None) -> Dict[str, Any]:
     try:
         config = PROMPTS_SCHEMAS.get(prompt_type)
         if not config:
             logger.error(f"Invalid prompt_type selected: {prompt_type}")
-            raise GeminiHTTPException(status_code=400, detail=f"Invalid prompt_type: {prompt_type}")
+            raise GeminiHTTPException(
+                status_code=400, detail=f"Invalid prompt_type: {prompt_type}")
 
         # Get base prompt and schema from config
         prompt_text = config["prompt_text"]
@@ -90,7 +87,8 @@ def process_with_gemini(
         variables_to_inject = {}
 
         # First, get variables from uploaded_files if available
-        if isinstance(uploaded_files, object) and hasattr(uploaded_files, 'variables'):
+        if isinstance(uploaded_files, object) and hasattr(
+                uploaded_files, 'variables'):
             variables_to_inject.update(uploaded_files.variables)
 
         # Then, override with step-specific variables if provided
@@ -104,23 +102,23 @@ def process_with_gemini(
                 prompt_text = prompt_text.replace(placeholder, str(var_value))
 
                 if isinstance(response_schema, str):
-                    response_schema = response_schema.replace(placeholder, str(var_value))
+                    response_schema = response_schema.replace(
+                        placeholder, str(var_value))
 
         # Prepare the prompt and model configuration
         generation_config = genai.types.GenerationConfig(
             temperature=temperature,
             top_p=top_p,
             top_k=top_k,
-            max_output_tokens=max_output_tokens
-        )
+            max_output_tokens=max_output_tokens)
 
         # Initialize model with generation config
-        model = genai.GenerativeModel(
-            model_name=model_name,
-            generation_config=generation_config
-        )
+        model = genai.GenerativeModel(model_name=model_name,
+                                      generation_config=generation_config)
 
-        logger.info(f"Initialized Gemini GenerativeModel with prompt_type '{prompt_type}'")
+        logger.info(
+            f"Initialized Gemini GenerativeModel with prompt_type '{prompt_type}'"
+        )
 
         # Create dynamic chat history with configurable message sequence
         if isinstance(uploaded_files, list):
@@ -133,17 +131,27 @@ def process_with_gemini(
             parts = uploaded_files["content"]["parts"]
 
         # Create chat history with separate content and prompt messages
-        chat_history = [
-            {"role": "user", "parts": parts},
-            {"role": "user", "parts": [{"text": f"{prompt_text}\nResponse format: {json.dumps(response_schema, indent=2)}"}]}
-        ]
-        logger.debug(f"Dynamic chat history constructed with {len(parts)} content parts and prompt")
+        chat_history = [{
+            "role": "user",
+            "parts": parts
+        }, {
+            "role":
+            "user",
+            "parts": [{
+                "text":
+                f"{prompt_text}\nResponse format: {json.dumps(response_schema, indent=2)}"
+            }]
+        }]
+        logger.debug(
+            f"Dynamic chat history constructed with {len(parts)} content parts and prompt"
+        )
 
         chat_session = model.start_chat(history=chat_history)
         logger.info("Chat session started with Gemini.")
 
         # Send a message to the model
-        response = chat_session.send_message("Process the audio and think deeply")
+        response = chat_session.send_message(
+            "Process the audio and think deeply")
         logger.debug(f"Received response from Gemini: {response.text}")
 
         # Extract JSON from the response
@@ -157,17 +165,20 @@ def process_with_gemini(
         raise he
     except Exception as e:
         logger.error(f"Unexpected error in process_with_gemini: {e}")
-        raise GeminiHTTPException(status_code=500, detail="Gemini processing failed")
+        raise GeminiHTTPException(status_code=500,
+                                  detail="Gemini processing failed")
+
 
 if __name__ == "__main__":
     # Set up logging
     logging.basicConfig(level=logging.INFO)
 
     # Test audio file path
-    audio_file_path = "/Users/ebowwa/caringmind/public/audio-samples/Elijah_October_27_2024_9__59PM.ogg"
+    audio_file_path = "audio-samples/Elijah_October_27_2024_9__59PM.ogg"
 
     # First request without speaker_name
     class ProcessLLMRequestContent:
+
         def __init__(self, path, include_speaker=False):
             self.path = path
             self.variables = {
@@ -191,36 +202,41 @@ if __name__ == "__main__":
             if "speaker_name" in self.variables:
                 base_text += f" from {self.variables['speaker_name']}'s session"
 
-            return [
-                {
-                    "inline_data": {
-                        "mime_type": self.variables["file_type"],
-                        "data": self.audio_data
-                    }
-                },
-                {
-                    "text": base_text
+            return [{
+                "inline_data": {
+                    "mime_type": self.variables["file_type"],
+                    "data": self.audio_data
                 }
-            ]
+            }, {
+                "text": base_text
+            }]
 
     try:
         # First request - without speaker name
         print("\n=== First Request (Without Speaker Name) ===")
-        test_file_1 = ProcessLLMRequestContent(audio_file_path, include_speaker=False)
-        result_1 = process_with_gemini(
-            uploaded_files={"role": "user", "content": {"parts": test_file_1.get_parts()}},
-            prompt_type="default_transcription",
-            temperature=0.7,
-            max_output_tokens=4096,
-            step_variables={
-                "step_name": "initial_analysis",
-                "analysis_type": "detailed",
-                "custom_instruction": "Focus on emotional content"
+        test_file_1 = ProcessLLMRequestContent(audio_file_path,
+                                               include_speaker=False)
+        result_1 = process_with_gemini(uploaded_files={
+            "role": "user",
+            "content": {
+                "parts": test_file_1.get_parts()
             }
-        )
+        },
+                                       prompt_type="default_transcription",
+                                       temperature=0.7,
+                                       max_output_tokens=4096,
+                                       step_variables={
+                                           "step_name":
+                                           "initial_analysis",
+                                           "analysis_type":
+                                           "detailed",
+                                           "custom_instruction":
+                                           "Focus on emotional content"
+                                       })
 
         # Save first result
-        output_path_1 = os.path.join(os.path.dirname(audio_file_path), "analysis_result_no_speaker.json")
+        output_path_1 = os.path.join(os.path.dirname(audio_file_path),
+                                     "analysis_result_no_speaker.json")
         with open(output_path_1, 'w', encoding='utf-8') as f:
             json.dump(result_1, f, indent=2)
 
@@ -230,21 +246,29 @@ if __name__ == "__main__":
 
         # Second request - with speaker name
         print("\n=== Second Request (With Speaker Name) ===")
-        test_file_2 = ProcessLLMRequestContent(audio_file_path, include_speaker=True)
-        result_2 = process_with_gemini(
-            uploaded_files={"role": "user", "content": {"parts": test_file_2.get_parts()}},
-            prompt_type="default_transcription",
-            temperature=0.7,
-            max_output_tokens=4096,
-            step_variables={
-                "step_name": "initial_analysis",
-                "analysis_type": "detailed",
-                "custom_instruction": "Focus on emotional content"
+        test_file_2 = ProcessLLMRequestContent(audio_file_path,
+                                               include_speaker=True)
+        result_2 = process_with_gemini(uploaded_files={
+            "role": "user",
+            "content": {
+                "parts": test_file_2.get_parts()
             }
-        )
+        },
+                                       prompt_type="default_transcription",
+                                       temperature=0.7,
+                                       max_output_tokens=4096,
+                                       step_variables={
+                                           "step_name":
+                                           "initial_analysis",
+                                           "analysis_type":
+                                           "detailed",
+                                           "custom_instruction":
+                                           "Focus on emotional content"
+                                       })
 
         # Save second result
-        output_path_2 = os.path.join(os.path.dirname(audio_file_path), "analysis_result_with_speaker.json")
+        output_path_2 = os.path.join(os.path.dirname(audio_file_path),
+                                     "analysis_result_with_speaker.json")
         with open(output_path_2, 'w', encoding='utf-8') as f:
             json.dump(result_2, f, indent=2)
 
