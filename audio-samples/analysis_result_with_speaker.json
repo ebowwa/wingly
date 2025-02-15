@@ -1,88 +1,10 @@
 {
   "type": "object",
-  "properties": {
-    "full_audio_transcribed": {
-      "type": "boolean",
-      "description": "Indicates if the entire audio file has been transcribed.",
-      "value": true
-    },
-    "conversation_analysis": {
-      "type": "array",
-      "description": "List of analyzed turns in the conversation.",
-      "items": {
-        "type": "object",
-        "properties": {
-          "diarization_html": {
-            "type": "string",
-            "description": "HTML structure indicating the speaker label."
-          },
-          "transcription_html": {
-            "type": "string",
-            "description": "HTML structure for the verbatim transcription."
-          },
-          "timestamps_html": {
-            "type": "string",
-            "description": "HTML structure indicating approximate time range."
-          },
-          "tone_analysis": {
-            "type": "object",
-            "properties": {
-              "tone": {
-                "type": "string",
-                "description": "The dominant tone identified."
-              },
-              "indicators": {
-                "type": "array",
-                "description": "Supporting details for the identified tone.",
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            "required": [
-              "tone",
-              "indicators"
-            ]
-          },
-          "confidence": {
-            "type": "number",
-            "description": "Confidence score for the tone detection."
-          },
-          "summary": {
-            "type": "string",
-            "description": "Concise summary of the speaker's contribution."
-          }
-        },
-        "required": [
-          "diarization_html",
-          "transcription_html",
-          "timestamps_html",
-          "tone_analysis",
-          "confidence",
-          "summary"
-        ]
-      },
-      "value": [
-        {
-          "diarization_html": "<h3>Speaker 1</h3>",
-          "transcription_html": "<h1>Hi, my name is Elijah Cornelius Arbee.</h1>",
-          "timestamps_html": "<h1>00:00-00:05</h1>",
-          "tone_analysis": {
-            "tone": "Neutral",
-            "indicators": [
-              "Clear and concise speech",
-              "Standard pronunciation",
-              "Lack of emotional inflection"
-            ]
-          },
-          "confidence": 0.95,
-          "summary": "The speaker introduces himself with his full name."
-        }
-      ]
-    }
-  },
-  "required": [
-    "full_audio_transcribed",
-    "conversation_analysis"
-  ]
+  "name": "Elijah Cornelius Arbee",
+  "prosody": "The name is spoken with a relatively even tone, lacking significant emphasis on any particular part.  The pace is deliberate, not rushed, suggesting a degree of composure. There's a slight upward inflection at the end, which could be interpreted as a question, subtly seeking confirmation or acknowledgment. The overall prosody suggests politeness and a neutral emotional state, without overt confidence or insecurity.",
+  "feeling": "The speaker seems comfortable, neither overly enthusiastic nor hesitant.  The neutral tone suggests a potentially practiced delivery, as if he's said his full name many times before. There is no detectable anxiety or nervousness in his voice.",
+  "confidence_score": 95,
+  "confidence_reasoning": "The name is clearly enunciated, and each syllable is distinct.  The pronunciation is standard, without unusual phonetic variations. The only uncertainty lies in the potential for subtle misinterpretations of the prosodic nuances, which are relatively subtle.",
+  "psychoanalysis": "Based solely on the limited audio sample, the speaker appears to present a composed and controlled persona.  The lack of emotional inflection in the name pronunciation suggests a desire for a clear and straightforward interaction. This controlled delivery might indicate a practiced approach to social interactions, or a deliberate effort to project a specific image. Further analysis would be needed to reach more definitive conclusions.",
+  "location_background": "There are indistinct background sounds that are too quiet to identify specifics. They do not interfere with the clarity of the speech.  The sounds are consistent with an indoor environment, likely a relatively quiet space."
 }

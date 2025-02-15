@@ -1,82 +1,9 @@
 {
-  "type": "object",
-  "properties": {
-    "full_audio_transcribed": {
-      "type": "boolean",
-      "description": "Indicates if the entire audio file has been transcribed.",
-      "value": true
-    },
-    "conversation_analysis": {
-      "type": "array",
-      "description": "List of analyzed turns in the conversation.",
-      "items": {
-        "type": "object",
-        "properties": {
-          "diarization_html": {
-            "type": "string",
-            "description": "HTML structure indicating the speaker label.",
-            "value": "<h3>Speaker 1</h3>"
-          },
-          "transcription_html": {
-            "type": "string",
-            "description": "HTML structure for the verbatim transcription.",
-            "value": "<p>Hi, my name is Elijah Cornelius Arby.</p>"
-          },
-          "timestamps_html": {
-            "type": "string",
-            "description": "HTML structure indicating approximate time range.",
-            "value": "<p>00:00-00:04</p>"
-          },
-          "tone_analysis": {
-            "type": "object",
-            "properties": {
-              "tone": {
-                "type": "string",
-                "description": "The dominant tone identified.",
-                "value": "Neutral"
-              },
-              "indicators": {
-                "type": "array",
-                "description": "Supporting details for the identified tone.",
-                "items": {
-                  "type": "string"
-                },
-                "value": [
-                  "Clear and concise speech.",
-                  "Even pace and volume.",
-                  "Lack of emotional inflection."
-                ]
-              }
-            },
-            "required": [
-              "tone",
-              "indicators"
-            ]
-          },
-          "confidence": {
-            "type": "number",
-            "description": "Confidence score for the tone detection.",
-            "value": 0.95
-          },
-          "summary": {
-            "type": "string",
-            "description": "Concise summary of the speaker's contribution.",
-            "value": "The speaker introduces himself as Elijah Cornelius Arby."
-          }
-        },
-        "required": [
-          "diarization_html",
-          "transcription_html",
-          "timestamps_html",
-          "tone_analysis",
-          "confidence",
-          "summary"
-        ]
-      }
-    }
-  },
-  "required": [
-    "full_audio_transcribed",
-    "conversation_analysis"
-  ]
+  "name": "Elijah Cornelius Sarbi",
+  "prosody": "The name is spoken with a clear, deliberate pace.  There's a slight emphasis on the surname, 'Sarbi,' suggesting a potential connection to or pride in that part of his identity. The tone is even and relatively neutral, lacking significant emotional inflection, though not entirely devoid of expression. There is a slight upward inflection at the end of the sentence, which could be interpreted as a subtle question or an attempt to engage the listener.",
+  "feeling": "The overall feeling conveyed is one of polite formality, perhaps even a touch of cautiousness.  There is no overt indication of discomfort, but neither is there an exuberant display of confidence or familiarity. It's as though Elijah is presenting himself in a professional or slightly guarded manner.",
+  "confidence_score": 8,
+  "confidence_reasoning": "The name is clearly enunciated, and the pronunciation sounds natural and consistent.  The slight uncertainty lies in the potential for subtle variations in the pronunciation of 'Sarbi' due to language background ambiguity.  It's a relatively straightforward name to transcribe, however.",
+  "psychoanalysis": "Based on the limited data, Elijah appears to be someone who values clarity and precision in self-presentation.  The neutral tone and measured pace suggest a degree of self-control and a preference for controlled interactions. The subtle emphasis on the surname hints at a possible desire to distinguish himself or to convey a sense of identity rooted in his family or heritage.  Further analysis would be needed to determine whether this is a defensive mechanism or a genuine reflection of his personality.",
+  "location_background": "Based solely on the provided audio, there is no clear indication of the user's location or background.  No ambient noise or other contextual clues are present to provide further insights."
 }
