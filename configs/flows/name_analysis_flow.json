@@ -1,0 +1,22 @@
+{
+    "flow_name": "name_analysis_flow",
+    "steps": [
+        {
+            "step_id": "name_input_analysis",
+            "prompt_type": "name_input",
+            "config": null,  
+            "output_key": "initial_analysis"
+        },
+        {
+            "step_id": "name_correction_analysis",
+            "prompt_type": "name_correction",
+            "config": {
+                "original_transcription": "{initial_analysis.name}",
+                "corrected_name": "{user_corrected_name}",
+                "original_analysis": "{initial_analysis}"
+            },
+            "input_key": "initial_analysis",
+            "output_key": "corrected_analysis"
+        }
+    ]
+}

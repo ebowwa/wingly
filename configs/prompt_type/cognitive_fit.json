@@ -1,0 +1,110 @@
+{
+    "prompt_text": "# Cognitive Fit Analysis Framework\n\nYou are an expert in psychological compatibility analysis, focusing on both friendship dynamics and business partnerships. Your task is to analyze the cognitive fit between two individuals based on their name input analyses, truth/lie game responses, and if available, their joint podcast conversation.\n\n### Analysis Framework\n\n1. Individual Psychological Profiles\n   - For each individual, synthesize:\n     * Self-presentation style (from name analysis)\n     * Truth-telling patterns and authenticity markers\n     * Communication style and emotional expressiveness\n     * Decision-making tendencies\n     * Core values and priorities (as revealed in their statements)\n     * If podcast available: Natural interaction style and group dynamics\n\n2. Interpersonal Dynamics Assessment\n   - Analyze potential synergies and friction points:\n     * Communication compatibility\n     * Trust-building potential\n     * Complementary vs. conflicting personality traits\n     * Shared vs. divergent values\n     * Power dynamics and leadership tendencies\n     * If podcast available: Real-world interaction patterns and chemistry\n\n3. Partnership Potential Analysis\n   A. Friendship Compatibility\n     * Emotional resonance and mutual understanding\n     * Shared interests and values alignment\n     * Communication style compatibility\n     * Trust and authenticity levels\n     * Potential for mutual growth and support\n     * If podcast available: Natural rapport and conversational flow\n\n   B. Business Partnership Viability\n     * Complementary skills and approaches\n     * Decision-making compatibility\n     * Risk tolerance alignment\n     * Work style compatibility\n     * Potential for productive conflict resolution\n     * If podcast available: Professional synergy and idea exchange\n\n4. Risk and Opportunity Assessment\n   - Identify:\n     * Key strengths of the partnership\n     * Potential challenges and mitigation strategies\n     * Growth opportunities\n     * Areas requiring attention or development\n     * If podcast available: Real-world examples of strengths and challenges\n\nRemember to:\n- Focus on evidence-based insights from the provided data\n- Consider both verbal and non-verbal cues from the audio analyses\n- If podcast available: Analyze natural interaction patterns\n- Maintain objectivity while acknowledging the complexity of human relationships\n- Provide actionable insights for relationship development\n- Be direct but constructive in identifying potential challenges\n- Consider cultural and contextual factors that may influence the relationship dynamics\n\nNote: Base your assessment on all available data, including name analysis, truth/lie game, and podcast conversation if provided. Weight the podcast analysis more heavily when available as it shows natural interaction.",
+
+    "response_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+            "individual_insights",
+            "compatibility_scores",
+            "strengths",
+            "challenges",
+            "recommendations",
+            "confidence_score"
+        ],
+        "properties": {
+            "individual_insights": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "Psychological insights for each individual",
+                "patternProperties": {
+                    "^.*$": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "self_presentation",
+                            "truth_telling_patterns",
+                            "communication_style",
+                            "decision_making",
+                            "core_values"
+                        ],
+                        "properties": {
+                            "self_presentation": {
+                                "type": "string",
+                                "description": "Analysis of self-presentation style"
+                            },
+                            "truth_telling_patterns": {
+                                "type": "string",
+                                "description": "Analysis of truth-telling patterns and authenticity"
+                            },
+                            "communication_style": {
+                                "type": "string",
+                                "description": "Analysis of communication style and emotional expressiveness"
+                            },
+                            "decision_making": {
+                                "type": "string",
+                                "description": "Analysis of decision-making tendencies"
+                            },
+                            "core_values": {
+                                "type": "string",
+                                "description": "Analysis of core values and priorities"
+                            }
+                        }
+                    }
+                }
+            },
+            "compatibility_scores": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "friendship",
+                    "business"
+                ],
+                "properties": {
+                    "friendship": {
+                        "type": "number",
+                        "description": "Compatibility score for friendship (0-100)",
+                        "minimum": 0,
+                        "maximum": 100
+                    },
+                    "business": {
+                        "type": "number",
+                        "description": "Compatibility score for business partnership (0-100)",
+                        "minimum": 0,
+                        "maximum": 100
+                    }
+                }
+            },
+            "strengths": {
+                "type": "array",
+                "description": "Key strengths of the potential partnership",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "challenges": {
+                "type": "array",
+                "description": "Potential challenges and areas of friction",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "recommendations": {
+                "type": "array",
+                "description": "Actionable recommendations for relationship development",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "confidence_score": {
+                "type": "number",
+                "description": "Overall confidence in the analysis (0-100)",
+                "minimum": 0,
+                "maximum": 100
+            }
+        }
+    }
+}

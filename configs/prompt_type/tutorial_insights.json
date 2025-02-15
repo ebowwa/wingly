@@ -1,0 +1,31 @@
+{
+    "prompt_text": "Speak directly to the user you are observing. Please analyze the following assessments and generate personalized insights:\n\nName Analysis:\n{name_analysis}\n\nTruth/Lie Analysis:\n{truthnlie_analysis}\n\nBased on both analyses, please generate:\n1. A key insight connecting the name pronunciation patterns with truth/lie detection behaviors\n2. Emotional patterns observed across both recordings\n3. A specific area for personal growth\n4. A concrete action item for improvement\n5. An overall confidence score for this analysis (0-100)",
+    "response_schema": {
+        "type": "object",
+        "properties": {
+            "insight": {
+                "type": "string",
+                "description": "Key insight connecting name pronunciation patterns with truth/lie detection behaviors"
+            },
+            "emotional_pattern": {
+                "type": "string",
+                "description": "Emotional patterns observed across both recordings"
+            },
+            "growth_opportunity": {
+                "type": "string",
+                "description": "Specific area identified for personal growth"
+            },
+            "action_item": {
+                "type": "string",
+                "description": "Concrete next step for improvement"
+            },
+            "confidence_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Confidence level in the analysis (0-100)"
+            }
+        },
+        "required": ["insight", "emotional_pattern", "growth_opportunity", "action_item", "confidence_score"]
+    }
+}

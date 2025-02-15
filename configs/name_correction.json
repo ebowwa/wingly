@@ -1,0 +1,45 @@
+{
+    "prompt_text": "# Human Review of Name Transcription\n\n**Analysis of User Name Transcription with Correction**\n\nThis review analyzes the model's initial transcription of a user's name, incorporating the user-provided correction and focusing on the original audio recording. The aim is to provide an updated, in-depth analysis of the user's name pronunciation, aligning with the user's intended spelling.\n\n## Input Context\n\n- **Original Audio:**  [Analyze the original audio file -  access and playback required for comprehensive analysis. Assuming access to audio characteristics for the purpose of this review.]\n- **Original Transcription:** '{original_transcription}'\n- **User's Correction:** '{corrected_name}'\n- **Previous Analysis:** {original_analysis}\n\n## Updated Analysis based on Audio and User Correction\n\n**1. Updated Transcription and Pronunciation Patterns:**\n\nIMPORTANT: The user's correction '{corrected_name}' is the EXACT and CONFIRMED spelling of their name. You MUST use this exact spelling in your response - do not modify or reinterpret it. The name field in your JSON response MUST match '{corrected_name}' exactly. Analyzing the original audio reveals pronunciation patterns in conjunction with this confirmed spelling. Specifically:\n\n* **Phonetic Breakdown:** [Detail a phonetic breakdown of the corrected name '{corrected_name}'. For example, if corrected name is \"Isabelle\" - \"ɪz.ə.ˈbɛl\"]. Repeat the updated name. Listen within the audio for the articulation of each phoneme. Note if there are any deviations from standard pronunciation, such as vowel softening/hardening, consonant elisions, or unique syllabic stresses within the name as spoken in the audio.\n\n* **Comparison to Original Transcription:** Compare the pronunciation of the corrected name as heard in the audio with the original transcription '{original_transcription}'. Identify specific points of divergence.\n\n* **Emphasis and Inflection:** Observe which syllables are emphasized in the user's pronunciation of the corrected name within the audio.\n\n**2. Speech Prosody Analysis:**\n\nA detailed examination of the audio's prosodic features reveals the user's vocal signature when stating their name:\n\n* **Tone:** Describe the overall tone of voice.\n* **Rhythm and Pace:** Analyze the rhythm of their speech when saying their name.\n* **Emphasis Patterns:** Reiterate the syllables that receive the most emphasis.\n* **Vocal Signature:** Based on the combination of tone, rhythm, and emphasis.\n\n**3. Emotional Undertones:**\n\nAnalyzing the emotional undertones present in the audio when the user states their name:\n\n* **Confidence Levels:** Assess the perceived confidence in their voice.\n* **Hesitation or Fluency:** Note any hesitation or stumbling in their speech.\n* **Pride or Neutrality:** Listen for cues that might suggest pride or a more neutral presentation.\n* **Emotional Context:** Describe the overall emotional impression conveyed.\n\n**4. Confidence in Audio Analysis:**\n\n* **Clarity of Audio:** Evaluate the clarity of the audio recording itself.\n* **Background Noise:** Note the presence and level of background noise.\n* **Speech Patterns:** Consider the user's individual speech patterns.\n* **Reasoning for Confidence Score:** [Provide a confidence score out of 5]\n\n**5. Psychoanalytic Assessment (Voice as a Window to Self):**\n\nThis section leverages your advanced understanding of human psychology, vocal patterns, and emotional expression to provide meaningful insights into the user's self-presentation through their name pronunciation.\n\n* **Foundational Analysis:** Draw from established psychological frameworks (e.g., prosodic psychology, vocal affect analysis, sociolinguistics) to analyze:\n    * How vocal characteristics reflect emotional states and self-perception\n    * Cultural and social influences on name pronunciation\n    * Relationship between vocal confidence and identity expression\n    * Patterns that suggest comfort level with self-presentation\n\n* **Pattern Recognition and Inference:** Based on your training in human behavioral patterns:\n    * Connect observed vocal patterns to broader behavioral tendencies\n    * Identify emotional undertones that suggest deeper psychological states\n    * Recognize cultural or social influences in pronunciation style\n    * Map voice characteristics to personality dimensions where strong correlations exist\n\n* **Contextual Integration:**\n    * Consider how the name pronunciation context influences presentation\n    * Analyze alignment between stated name correction and vocal delivery\n    * Evaluate consistency between different vocal elements\n    * Identify any disconnects between verbal and prosodic elements\n\n* **Dynamic Interpretation:**\n    * Synthesize multiple data points into coherent psychological insights\n    * Draw reasonable inferences about self-perception and social presentation\n    * Highlight unique or noteworthy patterns in self-expression\n    * Connect vocal patterns to potential underlying psychological states\n\nRemember: Your role is to provide insightful, well-reasoned analysis based on your training. Make informed inferences where patterns strongly suggest certain conclusions, while maintaining awareness of the complexity of human psychology.\n\n**6. Audio Environment and Background Context:**\n\n* **Background Noise Type:** Describe the type of background noise present.\n* **Environmental Cues:** Note any discernible audio cues about the recording environment.\n* **Potential Influence:** Consider how the environment might have influenced speech patterns.",
+    "response_schema": {
+        "type": "object",
+        "required": [
+            "name",
+            "confidence_score",
+            "feeling",
+            "prosody",
+            "psychoanalysis",
+            "confidence_reasoning",
+            "location_background"
+        ],
+        "properties": {
+            "name": {
+                "type": "string",
+                "description": "The exact corrected name - must match the provided corrected_name"
+            },
+            "confidence_score": {
+                "type": "number",
+                "description": "Confidence score out of 100 based on audio clarity and analysis quality"
+            },
+            "feeling": {
+                "type": "string",
+                "description": "Emotional state detected in voice, building on original analysis"
+            },
+            "prosody": {
+                "type": "string",
+                "description": "Comprehensive speech pattern analysis incorporating original insights"
+            },
+            "psychoanalysis": {
+                "type": "string",
+                "description": "Deep psychological interpretation leveraging both original and new analysis"
+            },
+            "confidence_reasoning": {
+                "type": "string",
+                "description": "Detailed explanation for confidence score considering all available context"
+            },
+            "location_background": {
+                "type": "string",
+                "description": "Environmental analysis incorporating original context and new observations"
+            }
+        }
+    }
+}

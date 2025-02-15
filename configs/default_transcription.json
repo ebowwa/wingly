@@ -1,0 +1,67 @@
+{
+  "prompt_text": "Please transcribe and analyze this audio clip. For each speaker turn:\n  1. Identify the speaker\n  2. Transcribe their exact words\n  3. Note the approximate timestamp\n  4. Analyze their tone\n  5. Provide a brief summary\n\n  Format using HTML tags as specified in the schema.\n  Focus on accuracy and clarity. NEVER HALLUCINATE or imagine more was said \n ignore inaudiable",
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "full_audio_transcribed": {
+        "type": "boolean",
+        "description": "Indicates if the entire audio file has been transcribed."
+      },
+      "conversation_analysis": {
+        "type": "array",
+        "description": "List of analyzed turns in the conversation.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "diarization_html": {
+              "type": "string",
+              "description": "HTML structure indicating the speaker label."
+            },
+            "transcription_html": {
+              "type": "string",
+              "description": "HTML structure for the verbatim transcription."
+            },
+            "timestamps_html": {
+              "type": "string",
+              "description": "HTML structure indicating approximate time range."
+            },
+            "tone_analysis": {
+              "type": "object",
+              "properties": {
+                "tone": {
+                  "type": "string",
+                  "description": "The dominant tone identified."
+                },
+                "indicators": {
+                  "type": "array",
+                  "description": "Supporting details for the identified tone.",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["tone", "indicators"]
+            },
+            "confidence": {
+              "type": "number",
+              "description": "Confidence score for the tone detection."
+            },
+            "summary": {
+              "type": "string",
+              "description": "Concise summary of the speaker's contribution."
+            }
+          },
+          "required": [
+            "diarization_html",
+            "transcription_html",
+            "timestamps_html",
+            "tone_analysis",
+            "confidence",
+            "summary"
+          ]
+        }
+      }
+    },
+    "required": ["full_audio_transcribed", "conversation_analysis"]
+  }
+}

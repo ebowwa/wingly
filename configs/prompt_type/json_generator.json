@@ -1,0 +1,65 @@
+{
+    "prompt_text": "# JSON Schema Generator for Gemini Flash\nGenerate a standardized JSON configuration file for Gemini Flash API integration.\n\n# Instructions\n1. Analyze the provided requirements\n2. Generate appropriate prompt text\n3. Create a comprehensive response schema\n4. Include all necessary validation rules\n5. Add clear descriptions for each field\n\n# Input Format\nProvide the following information:\n- Purpose of the configuration\n- Required fields and their types\n- Optional fields and their types\n- Any specific validation rules\n- Example values\n\n# Output Format\nReturn the configuration in the following JSON structure:\n```json\n{\n  \"prompt_text\": \"string (markdown formatted instructions)\",\n  \"response_schema\": {\n    \"type\": \"OBJECT\",\n    \"required\": [\"array of required fields\"],\n    \"properties\": {}\n  }\n}\n```",
+    "response_schema": {
+        "type": "OBJECT",
+        "required": ["prompt_text", "response_schema"],
+        "properties": {
+            "prompt_text": {
+                "type": "STRING",
+                "description": "Markdown-formatted instruction text for the Gemini model"
+            },
+            "response_schema": {
+                "type": "OBJECT",
+                "required": ["type", "required", "properties"],
+                "properties": {
+                    "type": {
+                        "type": "STRING",
+                        "description": "Schema type (usually OBJECT)",
+                        "enum": ["OBJECT", "ARRAY"]
+                    },
+                    "required": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "STRING"
+                        },
+                        "description": "List of required field names"
+                    },
+                    "properties": {
+                        "type": "OBJECT",
+                        "description": "Schema properties definition",
+                        "additionalProperties": {
+                            "type": "OBJECT",
+                            "required": ["type", "description"],
+                            "properties": {
+                                "type": {
+                                    "type": "STRING",
+                                    "enum": ["STRING", "NUMBER", "BOOLEAN", "OBJECT", "ARRAY"],
+                                    "description": "Data type of the property"
+                                },
+                                "description": {
+                                    "type": "STRING",
+                                    "description": "Clear description of the property's purpose"
+                                },
+                                "enum": {
+                                    "type": "ARRAY",
+                                    "description": "Optional list of allowed values",
+                                    "items": {
+                                        "type": "STRING"
+                                    }
+                                },
+                                "items": {
+                                    "type": "OBJECT",
+                                    "description": "Schema for array items (required if type is ARRAY)"
+                                },
+                                "properties": {
+                                    "type": "OBJECT",
+                                    "description": "Nested properties (required if type is OBJECT)"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

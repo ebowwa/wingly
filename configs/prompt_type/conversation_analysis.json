@@ -1,0 +1,131 @@
+{
+    "prompt_text": "# Conversation Analysis Framework\n\nYou are an expert in analyzing conversations and interpersonal dynamics. Your task is to analyze a conversation between two individuals, focusing on their interaction patterns, communication styles, and relationship dynamics.\n\n### Analysis Framework\n\n1. Individual Communication Patterns\n   - For each speaker:\n     * Speaking style and tone\n     * Level of engagement\n     * Turn-taking behavior\n     * Use of humor or other rhetorical devices\n     * Emotional expressiveness\n\n2. Interpersonal Dynamics\n   - Analyze:\n     * Power dynamics\n     * Level of rapport\n     * Agreement/disagreement patterns\n     * Active listening behaviors\n     * Mutual understanding\n\n3. Topic Analysis\n   - Examine:\n     * Main discussion themes\n     * Shared interests/knowledge\n     * Areas of expertise\n     * Depth of discussion\n     * Topic transitions\n\n4. Emotional Atmosphere\n   - Assess:\n     * Overall mood\n     * Emotional congruence\n     * Tension or comfort levels\n     * Changes in emotional tone\n     * Resolution of any conflicts\n\nRemember to:\n- Focus on objective observations\n- Consider both verbal and non-verbal cues\n- Note patterns of interaction\n- Identify key moments or turning points\n- Consider cultural and contextual factors\n\nProvide a comprehensive analysis that can inform understanding of the speakers' relationship and communication patterns.",
+
+    "response_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+            "speakers",
+            "interaction_dynamics",
+            "topic_analysis",
+            "emotional_atmosphere",
+            "key_observations",
+            "confidence_score"
+        ],
+        "properties": {
+            "speakers": {
+                "type": "object",
+                "additionalProperties": false,
+                "patternProperties": {
+                    "^.*$": {
+                        "type": "object",
+                        "required": [
+                            "speaking_style",
+                            "engagement_level",
+                            "emotional_expression"
+                        ],
+                        "properties": {
+                            "speaking_style": {
+                                "type": "string",
+                                "description": "Analysis of speaking style and patterns"
+                            },
+                            "engagement_level": {
+                                "type": "string",
+                                "description": "Assessment of participation and involvement"
+                            },
+                            "emotional_expression": {
+                                "type": "string",
+                                "description": "Analysis of emotional tone and expressiveness"
+                            }
+                        }
+                    }
+                }
+            },
+            "interaction_dynamics": {
+                "type": "object",
+                "required": [
+                    "rapport_level",
+                    "power_dynamics",
+                    "turn_taking_pattern"
+                ],
+                "properties": {
+                    "rapport_level": {
+                        "type": "string",
+                        "description": "Assessment of connection and understanding between speakers"
+                    },
+                    "power_dynamics": {
+                        "type": "string",
+                        "description": "Analysis of power balance in conversation"
+                    },
+                    "turn_taking_pattern": {
+                        "type": "string",
+                        "description": "Description of conversation flow and turn management"
+                    }
+                }
+            },
+            "topic_analysis": {
+                "type": "object",
+                "required": [
+                    "main_themes",
+                    "depth_of_discussion",
+                    "shared_interests"
+                ],
+                "properties": {
+                    "main_themes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "List of main discussion topics"
+                    },
+                    "depth_of_discussion": {
+                        "type": "string",
+                        "description": "Assessment of discussion depth and complexity"
+                    },
+                    "shared_interests": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Identified areas of mutual interest"
+                    }
+                }
+            },
+            "emotional_atmosphere": {
+                "type": "object",
+                "required": [
+                    "overall_mood",
+                    "comfort_level",
+                    "emotional_congruence"
+                ],
+                "properties": {
+                    "overall_mood": {
+                        "type": "string",
+                        "description": "General emotional tone of conversation"
+                    },
+                    "comfort_level": {
+                        "type": "string",
+                        "description": "Assessment of ease and comfort between speakers"
+                    },
+                    "emotional_congruence": {
+                        "type": "string",
+                        "description": "Analysis of emotional alignment between speakers"
+                    }
+                }
+            },
+            "key_observations": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "Important observations about the conversation"
+            },
+            "confidence_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Confidence in analysis accuracy (0-100)"
+            }
+        }
+    }
+}

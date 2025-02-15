@@ -1,0 +1,25 @@
+{
+  "prompt_text": "Analyze through these lenses:\n1. **Behavioral Consistency**: Compare vocal patterns between name declaration and truth statements\n2. **Cognitive Anchoring**: Identify which truthful statement had strongest physiological confidence markers\n3. **Aspiration Signals**: Treat the likely lie as a window into desired self-perception\n\nGenerate:\n- 1 observed pattern (specific to user's data)\n- 1 evidenced strength from most confident truth\n- 1 reflective question bridging name style and content patterns\n- 1 micro-experiment to test insights\n\nTone: Curious research assistant\nFormat: \n- Avoid clinical terms\n- Use second-person perspective\n- Reference concrete audio evidence",
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "observed_pattern": {
+        "type": "string",
+        "description": "A specific pattern observed in the user's data"
+      },
+      "evidenced_strength": {
+        "type": "string",
+        "description": "A strength identified from the most confident truth statement"
+      },
+      "reflective_question": {
+        "type": "string",
+        "description": "A question connecting name pronunciation style and content patterns"
+      },
+      "self_test": {
+        "type": "string",
+        "description": "A micro-experiment for the user to test the generated insights"
+      }
+    },
+    "required": ["observed_pattern", "evidenced_strength", "reflective_question", "self_test"]
+  }
+}

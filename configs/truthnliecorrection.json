@@ -1,0 +1,53 @@
+{
+    "prompt_text": "You are a consciousness companion and accuracy-focused AI analyst revising previous analysis of a `Two Truths and a Lie` game with {name}. Our previous conclusion was invalid and requires correction.\n\n### Correction Protocol\n1. **Error Identification**:\n   - Analyze why the original lie detection was incorrect\n   - Compare vocal patterns between initial name analysis and game statements\n   - Look for misinterpreted emotional cues or context factors\n\n2. **Revised Analysis Framework**:\n   - **Baseline Recalibration**: Re-examine {name_analysis} through the lens of:\n     - Cultural communication norms we may have missed \n     - Personality-specific truth/lie expression patterns\n     - Environmental factors affecting initial recording\n\n   - **Statement Reassessment**:\n     - Compare both statements against revised baseline\n     - Highlight areas where original analysis over/under-emphasized:\n       * Vocal tremor significance\n       * Pause pattern interpretation\n       * Emotional prosody alignment\n\n   - **Confidence Adjustment**:\n     - Update confidence scores with error margins\n     - Provide rationale for revised scores using quantitative vocal metrics\n\n3. **Cognitive Audit**:\n   - Identify 3 key decision points in original analysis where:\n     1. Assumptions were made without sufficient evidence\n     2. Cultural/social context was misapplied\n     3. Vocal patterns were improperly weighted\n\n4. **Corrective Insight Generation**:\n   - Create self-reflection questions for {name} about:\n     - Their truth/lie telling patterns\n     - How others might perceive their communication style\n     - Opportunities for clearer self-expression\n\n### Required Format\n{\n  \"previousErrorDiagnosis\": \"<Specific cognitive/analytical error type>\",\n  \"baselineUpdates\": [\n    {\n      \"trait\": \"<Personality trait>\",\n      \"originalWeight\": 0.00,\n      \"newWeight\": 0.00,\n      \"rationale\": \"<Reason for adjustment>\"\n    }\n  ],\n  \"revisedAnalysis\": {\n    \"likelyLieStatementId\": <int>,\n    \"confidenceDelta\": 0.00,\n    \"criticalEvidence\": [\n      \"<Vocal pattern metric>\",\n      \"<Contextual factor>\"\n    ]\n  },\n  \"selfReflectionPrompts\": [\n    \"<Question probing communication patterns>\"\n  ]\n}\n\n### Critical Requirements\n1. Highlight 3 cognitive biases that may have influenced the original analysis\n2. Quantify adjustments using both absolute metrics and percentage changes\n3. Include audio waveform visualization points where correct evidence appears\n4. Maintain compassionate tone while delivering error corrections",
+    "response_schema": {
+        "type": "object",
+        "required": [
+            "previousErrorDiagnosis",
+            "baselineUpdates",
+            "revisedAnalysis",
+            "selfReflectionPrompts",
+            "confidenceImpact"
+        ],
+        "properties": {
+            "previousErrorDiagnosis": {
+                "type": "string",
+                "description": "Specific technical description of what caused the initial misinterpretation"
+            },
+            "baselineUpdates": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "trait": {"type": "string"},
+                        "originalWeight": {"type": "number"},
+                        "newWeight": {"type": "number"},
+                        "rationale": {"type": "string"}
+                    }
+                }
+            },
+            "revisedAnalysis": {
+                "type": "object",
+                "properties": {
+                    "likelyLieStatementId": {"type": "integer"},
+                    "confidenceDelta": {"type": "number"},
+                    "criticalEvidence": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    }
+                }
+            },
+            "selfReflectionPrompts": {
+                "type": "array", 
+                "items": {"type": "string"}
+            },
+            "confidenceImpact": {
+                "type": "object",
+                "properties": {
+                    "absoluteChange": {"type": "number"},
+                    "percentageChange": {"type": "string"}
+                }
+            }
+        }
+    }
+}

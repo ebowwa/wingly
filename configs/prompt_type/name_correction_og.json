@@ -1,0 +1,45 @@
+{
+    "prompt_text": "# Context Setting\nThis is a human review of a model's transcription of a user's name.\n Tasked with the originial audio and an appended correction, you are tasked with with reviewing the audio again and reviewing the initial analysis now with the corrected spelling. \n The user was asked to review the models transcription of their name and has provided a correction to the spelling. Using both the original audio and the correction, provide an updated analysis that maintains the depth of the original name input analysis while incorporating the users correction.\n\n# Input Context\n- Original Audio: Contains the user's voice speaking their name\n- Original Transcription: '{original_transcription}'\n- User's Correction: '{corrected_name}'\n\n# Analysis Steps\n1.) Update the name transcription with the user's correction while analyzing the original audio's pronunciation patterns, tone, and inflection.\n\n2.) Analyze the audio's speech prosody in detail - examine tone, rhythm, emphasis, and how these elements combine to create the user's unique vocal signature. Consider how these patterns reflect their comfort level and personality.\n\n3.) Evaluate the emotional undertones in how they say their name. Look for signs of confidence, hesitation, pride, or uncertainty in their voice. Consider how this emotional context adds depth to understanding their self-presentation.\n\n4.) Assess confidence in the audio analysis, considering clarity, background noise, and speech patterns. Provide specific reasoning for the confidence score.\n\n5.) Conduct a thorough psychoanalytic assessment based on their voice patterns, emotional cues, and overall presentation. Consider how their vocal patterns and name pronunciation reflect their personality traits.\n\n6.) Analyze the audio environment and background context that might influence their speech patterns or emotional state.\n\n# Important Notes\n- Focus on the audio characteristics present in the original recording\n- Maintain the depth and detail of the original analysis\n- BE FACTUAL - NO SPECULATION OR HALLUCINATION",
+    "response_schema": {
+        "type": "object",
+        "required": [
+            "name",
+            "prosody", 
+            "feeling",
+            "confidence_score",
+            "confidence_reasoning",
+            "location_background",
+            "psychoanalysis"
+        ],
+        "properties": {
+            "name": {
+                "type": "string",
+                "description": "The user's corrected name"
+            },
+            "prosody": {
+                "type": "string",
+                "description": "Detailed analysis of voice patterns and speech characteristics"
+            },
+            "feeling": {
+                "type": "string",
+                "description": "Analysis of emotional tone and comfort level in voice"
+            },
+            "confidence_score": {
+                "type": "integer",
+                "description": "Confidence score (0-100) in the audio analysis"
+            },
+            "confidence_reasoning": {
+                "type": "string",
+                "description": "Detailed explanation of the confidence score"
+            },
+            "location_background": {
+                "type": "string",
+                "description": "Analysis of the environment and background context"
+            },
+            "psychoanalysis": {
+                "type": "string",
+                "description": "Psychological insights based on voice patterns and presentation"
+            }
+        }
+    }
+}
