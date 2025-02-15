@@ -6,7 +6,9 @@
 # save results as user profile 
 
 # index embeddings of results
+# - map to user profile
 
 # rank similarities of results and process (audio files and results) of similar users
+# - audi files are saved to s3 bucket
 
 

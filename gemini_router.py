@@ -9,7 +9,7 @@
 # the combined length of all audio files in a prompt must not exceed 9.5 hours.
 import os
 import asyncio
-from fastapi import APIRouter, UploadFile, File, HTTPException, Query
+from fastapi import APIRouter, UploadFile, File, HTTPException, Query, FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from typing import List, Optional, Tuple, Union
 from dotenv import load_dotenv
@@ -256,11 +256,14 @@ async def start_conversation():
     answers = []
     
     for question in questions:
-        await asyncio.sleep(0.5)  # Allow time for user to read question
-        user_input = input(f"{question}\n")
-        answers.append(user_input)
+        # await asyncio.sleep(0.5)  # Allow time for user to read question
+        # user_input = input(f"{question}\n")
+        # answers.append(user_input)
         # Process user input (e.g., store it, send it to the Gemini model)
         # ...
+        # Using a hypothetical function to get input from somewhere else 
+        user_input = await get_user_input(question)
+        answers.append(user_input)
 
     """
     generate a summary of the conversation
@@ -269,7 +272,39 @@ async def start_conversation():
     summary = "Here is a summary of the conversation."
     return summary
 
+# from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+# import json
 
+questions = [
+    "Introduce yourself to your prospective partner.",
+    "What are you looking for in a partner?",
+    "What is your relationship vision?"
+]
+
+@router.websocket("/conversation")
+async def conversation_endpoint(websocket: WebSocket):
+    """Handles an interactive conversation via WebSockets."""
+    await websocket.accept()
+    answers = []
+
+    try:
+        for question in questions:
+            await websocket.send_text(question)  # Ask the question
+            user_response = await websocket.receive_text()  # Wait for user reply
+            answers.append(user_response)  # Store the answer
+
+        # Generate the final summary
+        summary = {
+            "Summary": {
+                "Introduction": answers[0],
+                "Looking for": answers[1],
+                "Vision": answers[2]
+            }
+        }
+        await websocket.send_text(json.dumps(summary, indent=2))  # Send summary
+
+    except WebSocketDisconnect:
+        print("User disconnected")
 
 
 # Export the router at the bottom

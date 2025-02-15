@@ -13,7 +13,7 @@ from fastapi.middleware.wsgi import WSGIMiddleware
 from services.s3 import s3_service
 
 from routers.auth_router import auth_router, jwt
-from routers.admin_router import admin_router
+# from routers.admin_router import admin_router
 
 from models.user import db, User
 
@@ -44,11 +44,11 @@ bcrypt = Bcrypt(app)
 
 # Register blueprints (only once)
 app.register_blueprint(auth_router, url_prefix='/auth')
-app.register_blueprint(admin_router, url_prefix='/admin')
+# app.register_blueprint(admin_router, url_prefix='/admin')
 
 # Register FastAPI routers
-fastapi_app.include_router(gemini_router, prefix="/api")
-fastapi_app.mount("/", WSGIMiddleware(app))
+# fastapi_app.include_router(gemini_router, prefix="/api")
+# fastapi_app.mount("/", WSGIMiddleware(app))
 
 
 def init_s3():
