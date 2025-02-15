@@ -26,6 +26,13 @@ from utils.ai.json_prompt_types_loader import ConfigLoader
 from utils.ai.gemini_config import (GeminiPart, GeminiInlinePart,
                                     GeminiContent, GeminiRequest, PromptSchema)
 
+from fastapi import FastAPI
+from gemini_router import router as gemini_router
+
+app = FastAPI()
+
+app.include_router(gemini_router)
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -170,6 +177,8 @@ def process_with_gemini(
 
 
 if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
     # Set up logging
     logging.basicConfig(level=logging.INFO)
 

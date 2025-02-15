@@ -1,7 +1,15 @@
-run = "uvicorn gemini_process:app --host 0.0.0.0 --port 8000"
+run = "uv run app.py"
 modules = ["python-3.11"]
 [nix]
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "uvicorn gemini_process:app --host 0.0.0.0 --port 8000"]
+run = ["sh", "-c", "uv run app.py"]
+
+[[ports]]
+localPort = 8000
+externalPort = 80
+
+[auth]
+pageEnabled = false
+buttonEnabled = false

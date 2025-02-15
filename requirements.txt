@@ -38,3 +38,7 @@ jinja2
 requests
 google-ai-generativelanguage
 python-dotenv
+django-routers
+flask
+flask-bcrypt
+flask-jwt-extended

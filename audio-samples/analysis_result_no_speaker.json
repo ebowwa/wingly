@@ -14,38 +14,29 @@
         "properties": {
           "diarization_html": {
             "type": "string",
-            "description": "HTML structure indicating the speaker label.",
-            "value": "<h3>Speaker 1</h3>"
+            "description": "HTML structure indicating the speaker label."
           },
           "transcription_html": {
             "type": "string",
-            "description": "HTML structure for the verbatim transcription.",
-            "value": "<p>Hi, my name is Elijah Cornelius Arby.</p>"
+            "description": "HTML structure for the verbatim transcription."
           },
           "timestamps_html": {
             "type": "string",
-            "description": "HTML structure indicating approximate time range.",
-            "value": "<p>00:00-00:04</p>"
+            "description": "HTML structure indicating approximate time range."
           },
           "tone_analysis": {
             "type": "object",
             "properties": {
               "tone": {
                 "type": "string",
-                "description": "The dominant tone identified.",
-                "value": "Neutral"
+                "description": "The dominant tone identified."
               },
               "indicators": {
                 "type": "array",
                 "description": "Supporting details for the identified tone.",
                 "items": {
                   "type": "string"
-                },
-                "value": [
-                  "Clear and concise speech.",
-                  "Even pace and volume.",
-                  "Lack of emotional inflection."
-                ]
+                }
               }
             },
             "required": [
@@ -55,13 +46,11 @@
           },
           "confidence": {
             "type": "number",
-            "description": "Confidence score for the tone detection.",
-            "value": 0.95
+            "description": "Confidence score for the tone detection."
           },
           "summary": {
             "type": "string",
-            "description": "Concise summary of the speaker's contribution.",
-            "value": "The speaker introduces himself as Elijah Cornelius Arby."
+            "description": "Concise summary of the speaker's contribution."
           }
         },
         "required": [
@@ -72,7 +61,24 @@
           "confidence",
           "summary"
         ]
-      }
+      },
+      "value": [
+        {
+          "diarization_html": "<h1>Speaker 1</h1>",
+          "transcription_html": "<h1>Hi, my name is Elijah Cornelius Sarbi.</h1>",
+          "timestamps_html": "<h1>00:00-00:05</h1>",
+          "tone_analysis": {
+            "tone": "Neutral",
+            "indicators": [
+              "Clear and concise speech",
+              "Even intonation",
+              "No emotional inflection"
+            ]
+          },
+          "confidence": 0.95,
+          "summary": "The speaker introduces himself as Elijah Cornelius Sarbi."
+        }
+      ]
     }
   },
   "required": [
