@@ -2,8 +2,8 @@ from datetime import datetime
 from . import db
 
 class AIRequest(db.Model):
-    __tablename__ = 'ai_requests'
-    
+    __tablename__ = 'ai_request'
+
     id = db.Column(db.Integer, primary_key=True)
     profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'))
     is_anonymous = db.Column(db.Boolean, default=False)
@@ -28,7 +28,7 @@ class AIRequest(db.Model):
     max_output_tokens = db.Column(db.Integer)
     step_variables = db.Column(db.String)
     chat_history = db.Column(db.Text)
-    
+
     def to_gemini_request(self):
         """Convert AIRequest to GeminiRequest format"""
         return {
