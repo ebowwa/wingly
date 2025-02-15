@@ -4,13 +4,13 @@ from . import db
 # Memory association tables
 memory_owners = db.Table(
     'memory_owners',
-    db.Column('profile_id', db.Integer, db.ForeignKey('profile.id')),
-    db.Column('memory_id', db.Integer, db.ForeignKey('memory.id')))
+    db.Column('profile_id', db.Integer, db.ForeignKey('profiles.id')),
+    db.Column('memory_id', db.Integer, db.ForeignKey('memories.id')))
 
 memory_shares = db.Table(
     'memory_shares',
-    db.Column('profile_id', db.Integer, db.ForeignKey('profile.id')),
-    db.Column('memory_id', db.Integer, db.ForeignKey('memory.id')))
+    db.Column('profile_id', db.Integer, db.ForeignKey('profiles.id')),
+    db.Column('memory_id', db.Integer, db.ForeignKey('memories.id')))
 
 from .ai_request import AIRequest
 from .memory import Memory, memory_owners, memory_shares
