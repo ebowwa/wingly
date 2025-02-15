@@ -1,0 +1,82 @@
+{
+  "type": "object",
+  "properties": {
+    "full_audio_transcribed": {
+      "type": "boolean",
+      "description": "Indicates if the entire audio file has been transcribed.",
+      "value": true
+    },
+    "conversation_analysis": {
+      "type": "array",
+      "description": "List of analyzed turns in the conversation.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "diarization_html": {
+            "type": "string",
+            "description": "HTML structure indicating the speaker label.",
+            "value": "<h3>Speaker 1</h3>"
+          },
+          "transcription_html": {
+            "type": "string",
+            "description": "HTML structure for the verbatim transcription.",
+            "value": "<h3>Hi, my name is Elijah Cornelius Arbi.</h3>"
+          },
+          "timestamps_html": {
+            "type": "string",
+            "description": "HTML structure indicating approximate time range.",
+            "value": "<h3>00:00-00:04</h3>"
+          },
+          "tone_analysis": {
+            "type": "object",
+            "properties": {
+              "tone": {
+                "type": "string",
+                "description": "The dominant tone identified.",
+                "value": "Neutral"
+              },
+              "indicators": {
+                "type": "array",
+                "description": "Supporting details for the identified tone.",
+                "items": {
+                  "type": "string"
+                },
+                "value": [
+                  "Clear and concise introduction.",
+                  "Even pace of speech.",
+                  "Lack of emotional inflection."
+                ]
+              }
+            },
+            "required": [
+              "tone",
+              "indicators"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Confidence score for the tone detection.",
+            "value": 0.95
+          },
+          "summary": {
+            "type": "string",
+            "description": "Concise summary of the speaker's contribution.",
+            "value": "The speaker introduces himself with his full name: Elijah Cornelius Arbi."
+          }
+        },
+        "required": [
+          "diarization_html",
+          "transcription_html",
+          "timestamps_html",
+          "tone_analysis",
+          "confidence",
+          "summary"
+        ]
+      }
+    }
+  },
+  "required": [
+    "full_audio_transcribed",
+    "conversation_analysis"
+  ]
+}

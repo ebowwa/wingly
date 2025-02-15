@@ -1,0 +1,88 @@
+{
+  "type": "object",
+  "properties": {
+    "full_audio_transcribed": {
+      "type": "boolean",
+      "description": "Indicates if the entire audio file has been transcribed.",
+      "value": true
+    },
+    "conversation_analysis": {
+      "type": "array",
+      "description": "List of analyzed turns in the conversation.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "diarization_html": {
+            "type": "string",
+            "description": "HTML structure indicating the speaker label."
+          },
+          "transcription_html": {
+            "type": "string",
+            "description": "HTML structure for the verbatim transcription."
+          },
+          "timestamps_html": {
+            "type": "string",
+            "description": "HTML structure indicating approximate time range."
+          },
+          "tone_analysis": {
+            "type": "object",
+            "properties": {
+              "tone": {
+                "type": "string",
+                "description": "The dominant tone identified."
+              },
+              "indicators": {
+                "type": "array",
+                "description": "Supporting details for the identified tone.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "tone",
+              "indicators"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Confidence score for the tone detection."
+          },
+          "summary": {
+            "type": "string",
+            "description": "Concise summary of the speaker's contribution."
+          }
+        },
+        "required": [
+          "diarization_html",
+          "transcription_html",
+          "timestamps_html",
+          "tone_analysis",
+          "confidence",
+          "summary"
+        ]
+      },
+      "value": [
+        {
+          "diarization_html": "<h3>Speaker 1</h3>",
+          "transcription_html": "<p>Hi, my name is Elijah Cornelius Arbee.</p>",
+          "timestamps_html": "<p>00:00-00:03</p>",
+          "tone_analysis": {
+            "tone": "Neutral",
+            "indicators": [
+              "Clear and concise speech",
+              "Even pace",
+              "Lack of emotional inflection"
+            ]
+          },
+          "confidence": 0.95,
+          "summary": "The speaker introduces himself."
+        }
+      ]
+    }
+  },
+  "required": [
+    "full_audio_transcribed",
+    "conversation_analysis"
+  ]
+}
