@@ -30,6 +30,9 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+# Setup CORS
+
+
 # Configure Gemini API
 google_api_key = os.getenv("GOOGLE_API_KEY")
 if not google_api_key:
