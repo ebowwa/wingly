@@ -5,7 +5,7 @@ from .ai_request import AIRequest
 
 class TutorialMemory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
+    profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     step = db.Column(db.String(50))  # 'name_input', 'name_correction', 'truthnlie'
     
