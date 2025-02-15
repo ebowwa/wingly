@@ -11,6 +11,7 @@ import os
 import asyncio
 from fastapi import APIRouter, UploadFile, File, HTTPException, Query, FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional, Tuple, Union
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -30,7 +31,19 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+# Initialize FastAPI app
+app = FastAPI()
 # Setup CORS
+def setup_cors(app: FastAPI):
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # Allow all origins or specify particular ones
+        allow_credentials=True,
+        allow_methods=["*"],  # Allow all HTTP methods
+        allow_headers=["*"],  # Allow all headers
+    )
+setup_cors(app)
+
 
 
 # Configure Gemini API
