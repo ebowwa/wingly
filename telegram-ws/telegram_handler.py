@@ -3,7 +3,7 @@ import json
 import logging
 import websockets
 from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 from dotenv import load_dotenv
 import os
 
@@ -19,6 +19,20 @@ user_sessions = {}
 async def handle_private_message(update: Update, context):
     """Handles direct messages from users and sends them to the WebSocket server."""
     user_id = update.message.chat_id
+    
+    if update.message.voice:
+        try:
+            voice_file = await update.message.voice.get_file()
+            file_path = f"voice_message_{user_id}.ogg"
+            await voice_file.download_to_drive(file_path)
+            logging.info(f"Voice message downloaded to {file_path}")
+            await update.message.reply_text("Voice message received, processing...")
+            return
+        except Exception as e:
+            logging.error(f"Failed to download voice message: {e}")
+            await update.message.reply_text("Sorry, I couldn't process your voice message.")
+            return
+    
     message_text = update.message.text
 
     logging.info(f"Received message from user {user_id}: {message_text}")
@@ -67,13 +81,14 @@ async def start(update: Update, context):
 def main():
     """Start the bot."""
     app = Application.builder().token(TOKEN).build()
-
-    # Start command handler
+    
+    # Update handlers to include voice messages
     app.add_handler(MessageHandler(filters.Command("start"), start))
-
-    # Private message handler (exclude groups & channels)
-    app.add_handler(MessageHandler(filters.TEXT & filters.ChatType.PRIVATE, handle_private_message))
-
+    app.add_handler(MessageHandler(
+        (filters.TEXT | filters.VOICE) & filters.ChatType.PRIVATE, 
+        handle_private_message
+    ))
+    
     logging.info("Bot is running...")
     app.run_polling()
 

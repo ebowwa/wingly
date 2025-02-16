@@ -6,7 +6,7 @@ protobuf==3.20.3
 # Web Framework
 fastapi==0.109.0
 uvicorn[standard,websockets]==0.27.0
-websockets==12.0
+websockets>=13.0 
 python-multipart==0.0.6
 numpy
 #flask-login
@@ -46,3 +46,4 @@ flask_sqlalchemy
 psycopg2
 twilio
 google-genai
+python-telegram-bot
