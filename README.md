@@ -8,9 +8,10 @@
 uv run app.py
 ```
 
-### connect to the websocket
+### start the python handler
 ```
-websocat ws://localhost:8080/api/conversation
+cd telegram-ws
+python telegram_handler.py
 ```
 
 ```
