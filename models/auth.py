@@ -11,14 +11,14 @@ class AdminRole(db.Model):
 class Admin(db.Model):
     """Admin model extending base User model."""
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)  # Match users table name
     role_id = db.Column(db.Integer, db.ForeignKey('admin_role.id'), nullable=False)
     is_super_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
 
     # Relationships
-    user = db.relationship('User', backref=db.backref('admin', uselist=False))
+    user = db.relationship('User', back_populates='admin')  # Use back_populates for explicit relationship
     role = db.relationship('AdminRole', backref='admins')
 
     def __init__(self, user, role, is_super_admin=False):
