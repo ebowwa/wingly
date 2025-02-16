@@ -19,7 +19,12 @@ import logging
 import traceback
 from tenacity import retry, stop_after_attempt, wait_exponential
 from functools import partial
-# from services.gemini_process import process_with_gemini
+
+# Import the required processing modules
+from utils.ai.process_audio import process_audio_file, AudioProcessor
+from utils.ai.process_llm_request import ProcessLLMRequestContent
+from utils.ai.gemini_process import GeminiProcessor
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 # Load environment variables
@@ -54,23 +59,18 @@ if not google_api_key:
 
 genai.configure(api_key=google_api_key)
 
+# Initialize processors
+audio_processor = AudioProcessor()
+llm_processor = ProcessLLMRequestContent()
+gemini_processor = GeminiProcessor()
+
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
-def upload_to_gemini(file_content: bytes, mime_type: Optional[str] = None) -> object:
+async def async_upload_file_to_gemini(file: UploadFile) -> object:
     """
-    Prepares file content for Gemini by encoding it as base64.
+    Asynchronously process and upload file to Gemini
     """
-    try:
-        import base64
-        encoded_content = base64.b64encode(file_content).decode('utf-8')
-        
-        return {
-            "mime_type": mime_type or "audio/ogg",
-            "data": encoded_content
-        }
-    except Exception as e:
-        logger.error(f"Unexpected error preparing file: {e}")
-        traceback.print_exc()
-        raise
+    content = await file.read()
+    return await audio_processor.process_file(content, file.content_type)
 
 def process_audio_with_gemini(
     filename: str,
@@ -85,19 +85,11 @@ def process_audio_with_gemini(
     try:
         logger.debug(f"Processing with Gemini webhook for file: {filename}")
         
-        # Format the file data for Gemini
-        formatted_data = {
-            "role": "user",
-            "content": {
-                "parts": [
-                    {
-                        "inline_data": uploaded_file  # Use the uploaded file data directly
-                    }
-                ]
-            }
-        }
+        # Use LLM processor to format the request
+        formatted_data = llm_processor.format_audio_request(uploaded_file)
         
-        gemini_result = process_with_gemini(
+        # Process with Gemini
+        gemini_result = gemini_processor.process_request(
             formatted_data,
             prompt_type=prompt_type,
             model_name=model_name,
@@ -106,6 +98,7 @@ def process_audio_with_gemini(
             top_k=top_k,
             max_output_tokens=max_output_tokens
         )
+        
         logger.debug(f"Gemini processing successful for file: {filename}")
         return (filename, gemini_result)
     except Exception as e:

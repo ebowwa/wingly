@@ -1,5 +1,5 @@
 # Critical Dependencies (must be installed first)
-# itsdangerous==2.1.2
+itsdangerous==2.1.2
 starlette>=0.27.0
 pydantic==2.9.2
 protobuf==3.20.3
@@ -42,3 +42,5 @@ django-routers
 flask
 flask-bcrypt
 flask-jwt-extended
+flask_sqlalchemy
+psycopg2
