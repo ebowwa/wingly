@@ -65,7 +65,7 @@ class User(db.Model):
                             backref=db.backref('user_profile', uselist=False), 
                             foreign_keys='Profile.user_id')
     
-    subscription = db.relationship('Subscription', backref='user', uselist=False)
+    subscription = db.relationship('Subscription', backref=db.backref('user', uselist=False))
     
     def add_friend(self, user):
         if self.id == user.id:
@@ -206,6 +206,25 @@ class TelegramUser(db.Model):
         self.onboarding_completed = True
         self.tutorial_state = 'completed'
         db.session.commit()
+
+class Subscription(db.Model):
+    __tablename__ = 'subscriptions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    plan_name = db.Column(db.String(50), default='free')
+    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    end_date = db.Column(db.DateTime)
+    renewal_status = db.Column(db.String(20), default='active')
+    payment_method = db.Column(db.String(50))
+    
+    # Feature flags
+    can_analyze_audio = db.Column(db.Boolean, default=False)
+    max_audio_duration = db.Column(db.Integer, default=300)  # seconds
+    max_requests_per_day = db.Column(db.Integer, default=5)
+    
+    def is_active(self):
+        return self.end_date and datetime.utcnow() < self.end_date
 
 class Friendship(db.Model):
     __tablename__ = 'friendships'
