@@ -22,7 +22,7 @@ from services.s3 import s3_service
 from routers.auth_router import auth_router, jwt
 # from routers.admin_router import admin_router
 from routers.gemini_router import gemini_router
-from websocket_router import socket_router
+from routers.websocket_router import socket_router
 from models.user import db, User
 
 async def process_voice_message(media_url: str) -> str:

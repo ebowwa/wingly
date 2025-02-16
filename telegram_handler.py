@@ -6,6 +6,8 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 from dotenv import load_dotenv
 import os
+from utils.ai.gemini_process import process_with_gemini
+from utils.ai.process_llm_request import ProcessLLMRequestContent
 
 load_dotenv()
 
@@ -15,7 +17,8 @@ WS_URL = "ws://localhost:8080/api/conversation"
 # Store user WebSocket sessions
 user_sessions = {}
 
-
+# Downloading and Processing of Content including Text should occur alongside these downloading functions
+# recieved inputs can be either hardcoded reasoning flow and parameters or otherwise webhooks to process the content using the handle_private_message to return the wanted results
 async def download_voice_message(update: Update, user_id: int) -> tuple[bool, str]:
     """Downloads a voice message from a Telegram update."""
     try:
@@ -54,24 +57,72 @@ async def download_video_message(update: Update, user_id: int) -> tuple[bool, st
         return False, error_msg
 
 # Update the message handler to include video
+async def process_downloaded_file(file_path: str, mime_type: str) -> tuple[bool, str]:
+    """Process a downloaded file with Gemini without modifying the original download logic."""
+    try:
+        # Create the request structure directly instead of using ProcessLLMRequestContent
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+            
+        uploaded_files = {
+            "role": "user",
+            "content": {
+                "parts": [
+                    {
+                        "inline_data": {
+                            "mime_type": mime_type,
+                            "data": file_data
+                        }
+                    },
+                    {
+                        "text": "Analyzing media content"
+                    }
+                ]
+            }
+        }
+        
+        result = process_with_gemini(
+            uploaded_files=uploaded_files,
+            prompt_type="default_transcription",
+            temperature=0.7,
+            max_output_tokens=4096
+        )
+        return True, json.dumps(result, indent=2)
+    except Exception as e:
+        return False, str(e)
+
+# Modify only the message handling part in handle_private_message
 async def handle_private_message(update: Update, context):
     user_id = update.message.chat_id
     
     if update.message.voice:
-        success, result = await download_voice_message(update, user_id)
+        success, file_path = await download_voice_message(update, user_id)
         if not success:
             await update.message.reply_text("Sorry, I couldn't process your voice message.")
             return
-        await update.message.reply_text("Voice message received, processing...")
+            
+        # Process the downloaded file
+        success, result = await process_downloaded_file(file_path, "audio/ogg")
+        if success:
+            await update.message.reply_text(f"Analysis complete:\n{result}")
+        else:
+            await update.message.reply_text(f"Processing failed: {result}")
         return
+        
     elif update.message.video:
-        success, result = await download_video_message(update, user_id)
+        success, file_path = await download_video_message(update, user_id)
         if not success:
             await update.message.reply_text("Sorry, I couldn't process your video message.")
             return
-        await update.message.reply_text("Video message received, processing...")
+            
+        # Process the downloaded file
+        success, result = await process_downloaded_file(file_path, "video/mp4")
+        if success:
+            await update.message.reply_text(f"Analysis complete:\n{result}")
+        else:
+            await update.message.reply_text(f"Processing failed: {result}")
         return
-    
+
     message_text = update.message.text
 
     logging.info(f"Received message from user {user_id}: {message_text}")
@@ -116,6 +167,7 @@ async def start(update: Update, context):
     """Sends a welcome message when the user starts the bot."""
     await update.message.reply_text("Welcome! Send me a message, and I will process it.")
 
+# add a stop, reset
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
