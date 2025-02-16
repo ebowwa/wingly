@@ -78,7 +78,7 @@ with app.app_context():
 
 if __name__ == '__main__':
   import uvicorn
-  uvicorn.run("flaskapp:fastapi_app",
+  uvicorn.run("app:fastapi_app",
               host=os.getenv('FLASK_HOST', '0.0.0.0'),
               port=int(os.getenv('FLASK_PORT', 8080)),
               reload=os.getenv('FLASK_DEBUG', 'False').lower() == 'true',
