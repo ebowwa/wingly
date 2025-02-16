@@ -16,22 +16,61 @@ WS_URL = "ws://localhost:8080/api/conversation"
 user_sessions = {}
 
 
+async def download_voice_message(update: Update, user_id: int) -> tuple[bool, str]:
+    """Downloads a voice message from a Telegram update."""
+    try:
+        voice_file = await update.message.voice.get_file()
+        file_path = f"voice_message_{user_id}.ogg"
+        await voice_file.download_to_drive(file_path)
+        logging.info(f"Voice message downloaded to {file_path}")
+        return True, file_path
+    except Exception as e:
+        error_msg = f"Failed to download voice message: {e}"
+        logging.error(error_msg)
+        return False, error_msg
+
+async def download_video_message(update: Update, user_id: int) -> tuple[bool, str]:
+    """
+    Downloads a video message from a Telegram update.
+    
+    Args:
+        update: The telegram update containing the video message
+        user_id: The user's telegram ID
+        
+    Returns:
+        tuple: (success: bool, result: str)
+        - If successful: (True, file_path)
+        - If failed: (False, error_message)
+    """
+    try:
+        video_file = await update.message.video.get_file()
+        file_path = f"video_message_{user_id}.mp4"
+        await video_file.download_to_drive(file_path)
+        logging.info(f"Video message downloaded to {file_path}")
+        return True, file_path
+    except Exception as e:
+        error_msg = f"Failed to download video message: {e}"
+        logging.error(error_msg)
+        return False, error_msg
+
+# Update the message handler to include video
 async def handle_private_message(update: Update, context):
-    """Handles direct messages from users and sends them to the WebSocket server."""
     user_id = update.message.chat_id
     
     if update.message.voice:
-        try:
-            voice_file = await update.message.voice.get_file()
-            file_path = f"voice_message_{user_id}.ogg"
-            await voice_file.download_to_drive(file_path)
-            logging.info(f"Voice message downloaded to {file_path}")
-            await update.message.reply_text("Voice message received, processing...")
-            return
-        except Exception as e:
-            logging.error(f"Failed to download voice message: {e}")
+        success, result = await download_voice_message(update, user_id)
+        if not success:
             await update.message.reply_text("Sorry, I couldn't process your voice message.")
             return
+        await update.message.reply_text("Voice message received, processing...")
+        return
+    elif update.message.video:
+        success, result = await download_video_message(update, user_id)
+        if not success:
+            await update.message.reply_text("Sorry, I couldn't process your video message.")
+            return
+        await update.message.reply_text("Video message received, processing...")
+        return
     
     message_text = update.message.text
 
@@ -78,21 +117,16 @@ async def start(update: Update, context):
     await update.message.reply_text("Welcome! Send me a message, and I will process it.")
 
 
-def main():
-    """Start the bot."""
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    
     app = Application.builder().token(TOKEN).build()
     
-    # Update handlers to include voice messages
     app.add_handler(MessageHandler(filters.Command("start"), start))
     app.add_handler(MessageHandler(
-        (filters.TEXT | filters.VOICE) & filters.ChatType.PRIVATE, 
+        (filters.TEXT | filters.VOICE | filters.VIDEO) & filters.ChatType.PRIVATE, 
         handle_private_message
     ))
     
     logging.info("Bot is running...")
     app.run_polling()
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    main()
