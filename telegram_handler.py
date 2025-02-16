@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 from utils.ai.gemini_process import process_with_gemini
 from utils.ai.process_llm_request import ProcessLLMRequestContent
+from utils.telegram.command_handlers import TelegramCommands
 
 load_dotenv()
 
@@ -92,6 +93,40 @@ async def process_downloaded_file(file_path: str, mime_type: str) -> tuple[bool,
         return False, str(e)
 
 # Modify only the message handling part in handle_private_message
+async def format_response_for_telegram(response: str, response_type: str = "default") -> str:
+    """
+    Format any type of response for Telegram output.
+    
+    Args:
+        response: Raw response string (usually JSON)
+        response_type: Type of response ('gemini', 'websocket', 'default', etc.)
+    
+    Returns:
+        str: Formatted message ready for Telegram
+    """
+    try:
+        # Try to parse JSON if available
+        data = json.loads(response) if isinstance(response, str) else response
+        
+        if not isinstance(data, (dict, list)):
+            return str(data)
+        
+        # Format based on response type
+        if response_type == "gemini":
+            return f"Analysis complete:\n{json.dumps(data, indent=2)}"
+        elif response_type == "websocket":
+            return f"Summary:\n{json.dumps(data, indent=2)}"
+        else:
+            return json.dumps(data, indent=2)
+            
+    except json.JSONDecodeError:
+        # Return raw response if not JSON
+        return str(response)
+    except Exception as e:
+        logging.error(f"Error formatting response: {e}")
+        return f"Error formatting response: {str(e)}"
+
+# Update handle_private_message to use the new formatter
 async def handle_private_message(update: Update, context):
     user_id = update.message.chat_id
     
@@ -101,10 +136,10 @@ async def handle_private_message(update: Update, context):
             await update.message.reply_text("Sorry, I couldn't process your voice message.")
             return
             
-        # Process the downloaded file
         success, result = await process_downloaded_file(file_path, "audio/ogg")
         if success:
-            await update.message.reply_text(f"Analysis complete:\n{result}")
+            formatted_result = await format_response_for_telegram(result, "gemini")
+            await update.message.reply_text(formatted_result)
         else:
             await update.message.reply_text(f"Processing failed: {result}")
         return
@@ -162,19 +197,21 @@ async def handle_private_message(update: Update, context):
         logging.error(f"Error in WebSocket communication: {e}")
         await update.message.reply_text("An error occurred while processing your request.")
 
-
-async def start(update: Update, context):
-    """Sends a welcome message when the user starts the bot."""
-    await update.message.reply_text("Welcome! Send me a message, and I will process it.")
-
-# add a stop, reset
-
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     
     app = Application.builder().token(TOKEN).build()
     
-    app.add_handler(MessageHandler(filters.Command("start"), start))
+    # Initialize command handlers
+    commands = TelegramCommands(user_sessions)
+    
+    # Add command handlers
+    app.add_handler(CommandHandler("start", commands.start))
+    app.add_handler(CommandHandler("help", commands.help))
+    app.add_handler(CommandHandler("stop", commands.stop))
+    app.add_handler(CommandHandler("clear", commands.clear))
+    
+    # Add message handler
     app.add_handler(MessageHandler(
         (filters.TEXT | filters.VOICE | filters.VIDEO) & filters.ChatType.PRIVATE, 
         handle_private_message

@@ -71,7 +71,8 @@ def process_with_gemini(
         top_p: float = 0.95,
         top_k: int = 40,
         max_output_tokens: int = 8192,
-        step_variables: Dict[str, Any] = None) -> Dict[str, Any]:
+        step_variables: Dict[str, Any] = None,
+        force_json: bool = True) -> Union[Dict[str, Any], str]:
     try:
         config = PROMPTS_SCHEMAS.get(prompt_type)
         if not config:
@@ -81,7 +82,7 @@ def process_with_gemini(
 
         # Get base prompt and schema from config
         prompt_text = config["prompt_text"]
-        response_schema = config["response_schema"]
+        response_schema = config["response_schema"] if force_json else None
 
         # Handle dynamic variable injection if present in the prompt
         variables_to_inject = {}
@@ -135,13 +136,13 @@ def process_with_gemini(
             "role": "user",
             "parts": parts
         }, {
-            "role":
-            "user",
+            "role": "user",
             "parts": [{
-                "text":
-                f"{prompt_text}\nResponse format: {json.dumps(response_schema, indent=2)}"
+                "text": (f"{prompt_text}\nResponse format: {json.dumps(response_schema, indent=2)}"
+                        if force_json else prompt_text)
             }]
         }]
+
         logger.debug(
             f"Dynamic chat history constructed with {len(parts)} content parts and prompt"
         )
@@ -150,15 +151,16 @@ def process_with_gemini(
         logger.info("Chat session started with Gemini.")
 
         # Send a message to the model
-        response = chat_session.send_message(
-            "Process the audio and think deeply")
+        # Handle response based on force_json setting
+        response = chat_session.send_message("Process the audio and think deeply")
         logger.debug(f"Received response from Gemini: {response.text}")
 
-        # Extract JSON from the response
-        parsed_result = extract_json_from_response(response.text)
-        logger.info("Successfully extracted JSON from Gemini response.")
-
-        return parsed_result
+        if force_json:
+            parsed_result = extract_json_from_response(response.text)
+            logger.info("Successfully extracted JSON from Gemini response.")
+            return parsed_result
+        else:
+            return response.text
 
     except GeminiHTTPException as he:
         logger.error(f"HTTPException in process_with_gemini: {he.detail}")
@@ -166,7 +168,7 @@ def process_with_gemini(
     except Exception as e:
         logger.error(f"Unexpected error in process_with_gemini: {e}")
         raise GeminiHTTPException(status_code=500,
-                                  detail="Gemini processing failed")
+                                detail="Gemini processing failed")
 
 
 if __name__ == "__main__":
