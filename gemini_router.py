@@ -34,15 +34,15 @@ router = APIRouter(
 # Initialize FastAPI app
 app = FastAPI()
 # Setup CORS
-def setup_cors(app: FastAPI):
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],  # Allow all origins or specify particular ones
-        allow_credentials=True,
-        allow_methods=["*"],  # Allow all HTTP methods
-        allow_headers=["*"],  # Allow all headers
-    )
-setup_cors(app)
+# def setup_cors(app: FastAPI):
+#     app.add_middleware(
+#         CORSMiddleware,
+#         allow_origins=["*"],  # Allow all origins or specify particular ones
+#         allow_credentials=True,
+#         allow_methods=["*"],  # Allow all HTTP methods
+#         allow_headers=["*"],  # Allow all headers
+#     )
+# setup_cors(app)
 
 
 
