@@ -3,12 +3,17 @@ from . import db
 from .ai_request import AIRequest
 from .memory import Memory, memory_owners, memory_shares
 
-
 class Profile(db.Model):
     __tablename__ = 'profiles'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    # Use string reference instead of direct import
+    user = db.relationship('User', back_populates='profile')
+    
+    # Telegram user relationship - use string reference
+    telegram_user_id = db.Column(db.Integer, db.ForeignKey('telegram_users.id'))
+    telegram_user = db.relationship('TelegramUser', back_populates='profile')
 
     # Core Profile Data
     preferred_languages = db.Column(db.String(50))
@@ -28,21 +33,25 @@ class Profile(db.Model):
     voice_preferences = db.Column(db.JSON)
 
     # Relationships
-    # Add the relationship to AIRequest
+    # Relationships with proper back_populates
+    # Relationships with string references
     ai_requests = db.relationship('AIRequest',
-                                  backref='profile',
-                                  lazy='dynamic')
-    memories = db.relationship('Memory', backref='profile')
-    tutorial_memories = db.relationship('TutorialMemory', backref='profile')
+                                back_populates='profile',
+                                lazy='dynamic')
+    
+    memories = db.relationship('Memory',
+                             back_populates='profile',
+                             overlaps="owner_profiles,shared_profiles")
+    
+    tutorial_memories = db.relationship('TutorialMemory',
+                                      back_populates='profile')
 
-    # Memory relationships
-    mutual_memories = db.relationship('Memory',
-                                      secondary=memory_owners,
-                                      backref=db.backref('owner_profiles',
-                                                         lazy='dynamic'))
+    owned_memories = db.relationship('Memory',
+                                   secondary=memory_owners,
+                                   back_populates='owner_profiles',
+                                   overlaps="memories")
 
-    shared_memories = db.relationship('Memory',
-                                      secondary=memory_shares,
-                                      backref=db.backref(
-                                          'shared_with_profiles',
-                                          lazy='dynamic'))
+    memory_shares = db.relationship('Memory',
+                                  secondary=memory_shares,
+                                  back_populates='shared_profiles',
+                                  overlaps="memories")

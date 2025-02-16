@@ -7,19 +7,14 @@ class TelegramCommands:
         self.user_sessions = user_sessions
 
     async def start(self, update: Update, context: CallbackContext):
-        """Sends a welcome message when the user starts the bot."""
-        welcome_message = (
-            "👋 Welcome to Wingly - Your Personal Connection Assistant!\n\n"
-            "I'm here to help you build meaningful relationships and find compatible friendships. "
-            "You can share voice messages, videos, or text about your interests and experiences.\n\n"
-            "Commands:\n"
-            "/start - Begin your journey\n"
-            "/help - Learn how I can assist you\n"
-            "/stop - Pause our conversation\n"
-            "/clear - Start fresh\n\n"
-            "Let's start building meaningful connections! 🤝"
+        """Initiates the tutorial sequence for new users."""
+        tutorial_message = (
+            "🌟 Let's get to know each other!\n\n"
+            "Please say 'Hi' or 'Hello' followed by your full name.\n"
+            "For example: 'Hi, I'm John Smith' or 'Hello, my name is Jane Doe'\n\n"
+            "This will help me personalize your experience and find better connections for you! ✨"
         )
-        await update.message.reply_text(welcome_message)
+        await update.message.reply_text(tutorial_message)
 
     async def help(self, update: Update, context: CallbackContext):
         """Shows help information about bot commands and usage."""

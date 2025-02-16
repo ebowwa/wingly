@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 import os
 from utils.ai.gemini_process import process_with_gemini
 from utils.ai.process_llm_request import ProcessLLMRequestContent
-from utils.telegram.command_handlers import TelegramCommands
 
 load_dotenv()
 
@@ -197,21 +196,67 @@ async def handle_private_message(update: Update, context):
         logging.error(f"Error in WebSocket communication: {e}")
         await update.message.reply_text("An error occurred while processing your request.")
 
+
+async def start(update: Update, context):
+    """Sends a welcome message when the user starts the bot."""
+    welcome_message = (
+        "- Send text messages for processing\n"
+        "- Send voice messages for analysis\n"
+        "- Send video content for processing\n"
+        "- Get AI-powered responses"
+        "Send me a message, and I will process it!"
+    )
+    await update.message.reply_text(welcome_message)
+
+async def help(update: Update, context):
+    """Shows help information about bot commands and usage."""
+    help_text = (
+        "🤖 Bot Commands:\n\n"
+        "/start - Initialize the bot\n"
+        "/help - Show this help message\n"
+        "/stop - End current conversation\n"
+        "/clear - Clear conversation history\n\n"
+        "Features:\n"
+        "- Send text messages for processing\n"
+        "- Send voice messages for analysis\n"
+        "- Send video content for processing\n"
+        "- Get AI-powered responses"
+    )
+    await update.message.reply_text(help_text)
+
+async def stop(update: Update, context):
+    """Stops the current conversation and closes WebSocket connection."""
+    user_id = update.message.chat_id
+    if user_id in user_sessions:
+        try:
+            await user_sessions[user_id].close()
+            del user_sessions[user_id]
+            await update.message.reply_text("Conversation stopped. Send any message to start a new one.")
+        except Exception as e:
+            logging.error(f"Error stopping conversation: {e}")
+            await update.message.reply_text("Error stopping conversation. Please try again.")
+    else:
+        await update.message.reply_text("No active conversation to stop.")
+
+async def clear(update: Update, context):
+    """Clears the conversation history for the user."""
+    user_id = update.message.chat_id
+    if user_id in user_sessions:
+        try:
+            await user_sessions[user_id].close()
+            del user_sessions[user_id]
+            await update.message.reply_text("Conversation history cleared. You can start a new conversation.")
+        except Exception as e:
+            logging.error(f"Error clearing conversation: {e}")
+            await update.message.reply_text("Error clearing conversation history. Please try again.")
+    else:
+        await update.message.reply_text("No conversation history to clear.")
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     
     app = Application.builder().token(TOKEN).build()
     
-    # Initialize command handlers
-    commands = TelegramCommands(user_sessions)
-    
-    # Add command handlers
-    app.add_handler(CommandHandler("start", commands.start))
-    app.add_handler(CommandHandler("help", commands.help))
-    app.add_handler(CommandHandler("stop", commands.stop))
-    app.add_handler(CommandHandler("clear", commands.clear))
-    
-    # Add message handler
+    app.add_handler(MessageHandler(filters.Command("start"), start))
     app.add_handler(MessageHandler(
         (filters.TEXT | filters.VOICE | filters.VIDEO) & filters.ChatType.PRIVATE, 
         handle_private_message
