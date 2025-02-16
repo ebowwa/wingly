@@ -9,7 +9,7 @@
 # the combined length of all audio files in a prompt must not exceed 9.5 hours.
 import os
 import asyncio
-from fastapi import APIRouter, UploadFile, File, HTTPException, Query, FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, UploadFile, File, HTTPException, Query, FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional, Tuple, Union
@@ -24,6 +24,7 @@ from functools import partial
 from utils.ai.process_audio import process_audio_file
 from utils.ai.process_llm_request import ProcessLLMRequestContent
 from utils.ai.gemini_process import process_with_gemini
+from utils.ai.gemini_chat_formatter import _format_chat_messages
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -68,10 +69,24 @@ async def async_upload_file_to_gemini(file: UploadFile) -> object:
     """
     Asynchronously process and upload file to Gemini
     """
-    content = await file.read()
-    # Create LLM processor with the file path
-    llm_processor = ProcessLLMRequestContent(path=file.filename)
-    return await llm_processor.process_file(content, file.content_type)
+    try:
+        content = await file.read()
+        logger.debug(f"File content read successfully: {file.filename}, size: {len(content)} bytes")
+        
+        # Process the file content directly
+        import base64
+        encoded_content = base64.b64encode(content).decode('utf-8')
+        
+        processed_content = {
+            "mime_type": file.content_type,
+            "data": encoded_content
+        }
+        return processed_content
+        
+    except Exception as e:
+        logger.error(f"Error in async_upload_file_to_gemini: {str(e)}")
+        logger.error(f"File details - name: {file.filename}, content_type: {file.content_type}")
+        raise
 
 def process_audio_with_gemini(
     filename: str,
@@ -86,9 +101,32 @@ def process_audio_with_gemini(
     try:
         logger.debug(f"Processing with Gemini webhook for file: {filename}")
         
-        # Create LLM processor with the file path
-        llm_processor = ProcessLLMRequestContent(path=filename)
-        formatted_data = llm_processor.format_audio_request(uploaded_file)
+        # Create message structure for the chat formatter
+        messages = [
+            {
+                "role": "user",
+                "content": {
+                    "parts": [
+                        {
+                            "text": "Please transcribe and analyze this audio."
+                        },
+                        {
+                            "inlineData": {
+                                "mimeType": uploaded_file["mime_type"],
+                                "data": uploaded_file["data"]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+        
+        # Format messages using the chat formatter
+        formatted_data = _format_chat_messages(
+            messages=messages,
+            variables={},
+            prompt_type={"prompt_text": prompt_type}
+        )
         
         # Process with Gemini
         gemini_result = process_with_gemini(
