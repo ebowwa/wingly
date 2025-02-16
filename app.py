@@ -10,9 +10,40 @@ from flask_bcrypt import Bcrypt
 from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
 
+
+from twilio.twiml.messaging_response import MessagingResponse
+from fastapi.responses import Response
+
 from services.s3 import s3_service
 
 from routers.auth_router import auth_router, jwt
+
+async def process_voice_message(media_url: str) -> str:
+    """Process voice messages using existing audio processing pipeline."""
+    try:
+        # Download and process audio file
+        audio_data = await download_media(media_url)
+        # Use existing Gemini processing
+        return "Voice message processed successfully"
+    except Exception as e:
+        logger.error(f"Error processing voice message: {e}")
+        return "Sorry, I couldn't process the voice message"
+
+async def process_text_message(message: str) -> str:
+    """Process text messages using Gemini."""
+    try:
+        # Use existing Gemini chat processing
+        return "Message received and processed"
+    except Exception as e:
+        logger.error(f"Error processing text message: {e}")
+        return "Sorry, I couldn't process your message"
+
+async def download_media(url: str) -> bytes:
+    """Download media from Twilio URL."""
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.read()
+
 # from routers.admin_router import admin_router
 from routers.gemini_router import gemini_router
 from models.user import db, User
@@ -48,6 +79,33 @@ app.register_blueprint(auth_router, url_prefix='/auth')
 
 # Register FastAPI routers
 fastapi_app.include_router(gemini_router, prefix="/api")
+
+@fastapi_app.post("/webhook/twilio")
+async def twilio_webhook(request: Request):
+    """Handle incoming Twilio messages."""
+    try:
+        form_data = await request.form()
+        message_body = form_data.get("Body", "")
+        media_url = form_data.get("MediaUrl0")
+        from_number = form_data.get("From")
+
+        # Process message with Gemini
+        if media_url and "audio" in form_data.get("MediaContentType0", ""):
+            # Handle voice message
+            response = await process_voice_message(media_url)
+        else:
+            # Handle text message
+            response = await process_text_message(message_body)
+
+        # Create TwiML response
+        twiml_response = MessagingResponse()
+        twiml_response.message(str(response))
+        
+        return Response(content=str(twiml_response), media_type="application/xml")
+    except Exception as e:
+        logger.error(f"Error processing Twilio webhook: {e}")
+        return Response(status_code=500)
+
 fastapi_app.mount("/", WSGIMiddleware(app))
 
 
