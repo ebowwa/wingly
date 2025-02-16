@@ -62,17 +62,14 @@ class GeminiWebSocket:
                         print("\nResponse interrupted by user")
                         break
 
-async def main():
+if __name__ == "__main__":
     # Example usage
     api_key = "YOUR_GEMINI_API_KEY"
     gemini = GeminiWebSocket(api_key)
     
     # For text response
-    await gemini.chat_session(response_type="TEXT")
+    asyncio.run(gemini.chat_session(response_type="TEXT"))
     
     # For audio response with specific voice
     # Available voices: "Aoede", "Charon", "Fenrir", "Kore", "Puck"
-    # await gemini.chat_session(response_type="AUDIO", voice_name="Aoede")
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    # asyncio.run(gemini.chat_session(response_type="AUDIO", voice_name="Aoede"))
