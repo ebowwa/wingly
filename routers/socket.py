@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Query, FastAPI, 
 from dotenv import load_dotenv
 import os
 import google.generativeai as genai
+import logging
 
 # Initialize the router
 router = APIRouter()

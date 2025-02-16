@@ -256,47 +256,4 @@ async def process_audio(
             status_code=500,
             detail="Internal Server Error. Please check the server logs."
         )
-# Export the router at the bottom
-gemini_router = router
-
-@router.post("/start-conversation")
-async def start_conversation():
-    """
-    Start a conversation with the Gemini model.
-    
-    Ask the user for defined input and generate a summary
-    """
-    questions = [
-        "Introduce yourself to your prospective partner",
-        "What are you looking for in a partner",
-        "What is your relationship vision."
-    ]
-
-    answers = []
-    
-    for question in questions:
-        # await asyncio.sleep(0.5)  # Allow time for user to read question
-        # user_input = input(f"{question}\n")
-        # answers.append(user_input)
-        # Process user input (e.g., store it, send it to the Gemini model)
-        # ...
-        # Using a hypothetical function to get input from somewhere else 
-        user_input = await get_user_input(question)
-        answers.append(user_input)
-
-    """
-    generate a summary of the conversation
-    """
-
-    summary = "Here is a summary of the conversation."
-    return summary
-
-questions = [
-    "Introduce yourself to your prospective partner.",
-    "What are you looking for in a partner?",
-    "What is your relationship vision?"
-]
-
-
-# Export the router at the bottom
 gemini_router = router
