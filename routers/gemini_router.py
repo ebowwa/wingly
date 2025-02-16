@@ -19,12 +19,7 @@ import logging
 import traceback
 from tenacity import retry, stop_after_attempt, wait_exponential
 from functools import partial
-
-# Import the required processing modules
-from utils.ai.process_audio import process_audio_file
-from utils.ai.process_llm_request import ProcessLLMRequestContent
 from utils.ai.gemini_process import process_with_gemini
-from utils.ai.gemini_chat_formatter import _format_chat_messages
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -37,21 +32,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-# Initialize FastAPI app
-app = FastAPI()
-# Setup CORS
-# def setup_cors(app: FastAPI):
-#     app.add_middleware(
-#         CORSMiddleware,
-#         allow_origins=["*"],  # Allow all origins or specify particular ones
-#         allow_credentials=True,
-#         allow_methods=["*"],  # Allow all HTTP methods
-#         allow_headers=["*"],  # Allow all headers
-#     )
-# setup_cors(app)
-
-
-
 # Configure Gemini API
 google_api_key = os.getenv("GOOGLE_API_KEY")
 if not google_api_key:
@@ -60,32 +40,33 @@ if not google_api_key:
 
 genai.configure(api_key=google_api_key)
 
-# Initialize processors
-# Remove global LLM processor as it needs a path
-# We'll create it when needed in the processing functions
-
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
+def upload_to_gemini(file_content: bytes, mime_type: Optional[str] = None) -> object:
+    """
+    Prepares file content for Gemini by encoding it as base64.
+    """
+    try:
+        import base64
+        encoded_content = base64.b64encode(file_content).decode('utf-8')
+        
+        return {
+            "mime_type": mime_type or "audio/ogg",
+            "data": encoded_content
+        }
+    except Exception as e:
+        logger.error(f"Unexpected error preparing file: {e}")
+        traceback.print_exc()
+        raise
+
 async def async_upload_file_to_gemini(file: UploadFile) -> object:
     """
-    Asynchronously process and upload file to Gemini
+    Asynchronously reads and uploads file content to Gemini.
     """
     try:
         content = await file.read()
-        logger.debug(f"File content read successfully: {file.filename}, size: {len(content)} bytes")
-        
-        # Process the file content directly
-        import base64
-        encoded_content = base64.b64encode(content).decode('utf-8')
-        
-        processed_content = {
-            "mime_type": file.content_type,
-            "data": encoded_content
-        }
-        return processed_content
-        
+        return upload_to_gemini(content, file.content_type)
     except Exception as e:
-        logger.error(f"Error in async_upload_file_to_gemini: {str(e)}")
-        logger.error(f"File details - name: {file.filename}, content_type: {file.content_type}")
+        logger.error(f"Error uploading file {file.filename}: {e}")
         raise
 
 def process_audio_with_gemini(
@@ -101,34 +82,18 @@ def process_audio_with_gemini(
     try:
         logger.debug(f"Processing with Gemini webhook for file: {filename}")
         
-        # Create message structure for the chat formatter
-        messages = [
-            {
-                "role": "user",
-                "content": {
-                    "parts": [
-                        {
-                            "text": "Please transcribe and analyze this audio."
-                        },
-                        {
-                            "inlineData": {
-                                "mimeType": uploaded_file["mime_type"],
-                                "data": uploaded_file["data"]
-                            }
-                        }
-                    ]
-                }
+        # Format the file data for Gemini
+        formatted_data = {
+            "role": "user",
+            "content": {
+                "parts": [
+                    {
+                        "inline_data": uploaded_file  # Use the uploaded file data directly
+                    }
+                ]
             }
-        ]
+        }
         
-        # Format messages using the chat formatter
-        formatted_data = _format_chat_messages(
-            messages=messages,
-            variables={},
-            prompt_type={"prompt_text": prompt_type}
-        )
-        
-        # Process with Gemini
         gemini_result = process_with_gemini(
             formatted_data,
             prompt_type=prompt_type,
@@ -138,7 +103,6 @@ def process_audio_with_gemini(
             top_k=top_k,
             max_output_tokens=max_output_tokens
         )
-        
         logger.debug(f"Gemini processing successful for file: {filename}")
         return (filename, gemini_result)
     except Exception as e:
@@ -287,7 +251,8 @@ async def process_audio(
             status_code=500,
             detail="Internal Server Error. Please check the server logs."
         )
-
+# Export the router at the bottom
+gemini_router = router
 
 @router.post("/start-conversation")
 async def start_conversation():
