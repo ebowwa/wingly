@@ -21,9 +21,9 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from functools import partial
 
 # Import the required processing modules
-from utils.ai.process_audio import process_audio_file, AudioProcessor
+from utils.ai.process_audio import process_audio_file
 from utils.ai.process_llm_request import ProcessLLMRequestContent
-from utils.ai.gemini_process import GeminiProcessor
+from utils.ai.gemini_process import process_with_gemini
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -60,9 +60,8 @@ if not google_api_key:
 genai.configure(api_key=google_api_key)
 
 # Initialize processors
-audio_processor = AudioProcessor()
-llm_processor = ProcessLLMRequestContent()
-gemini_processor = GeminiProcessor()
+# Remove global LLM processor as it needs a path
+# We'll create it when needed in the processing functions
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
 async def async_upload_file_to_gemini(file: UploadFile) -> object:
@@ -70,7 +69,9 @@ async def async_upload_file_to_gemini(file: UploadFile) -> object:
     Asynchronously process and upload file to Gemini
     """
     content = await file.read()
-    return await audio_processor.process_file(content, file.content_type)
+    # Create LLM processor with the file path
+    llm_processor = ProcessLLMRequestContent(path=file.filename)
+    return await llm_processor.process_file(content, file.content_type)
 
 def process_audio_with_gemini(
     filename: str,
@@ -85,11 +86,12 @@ def process_audio_with_gemini(
     try:
         logger.debug(f"Processing with Gemini webhook for file: {filename}")
         
-        # Use LLM processor to format the request
+        # Create LLM processor with the file path
+        llm_processor = ProcessLLMRequestContent(path=filename)
         formatted_data = llm_processor.format_audio_request(uploaded_file)
         
         # Process with Gemini
-        gemini_result = gemini_processor.process_request(
+        gemini_result = process_with_gemini(
             formatted_data,
             prompt_type=prompt_type,
             model_name=model_name,

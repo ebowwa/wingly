@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 from utils.ai.process_llm_request import ProcessLLMRequestContent
-from gemini_process import process_with_gemini
+from .gemini_process import process_with_gemini
 
 def process_audio_file(
     audio_path: str,
