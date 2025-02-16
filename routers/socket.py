@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import google.generativeai as genai
 import logging
+import json
 
 # Initialize the router
 router = APIRouter()
