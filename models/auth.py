@@ -56,13 +56,13 @@ class User(db.Model):
     
     friendships = db.relationship('Friendship',
         primaryjoin='or_(User.id==Friendship.user_id, User.id==Friendship.friend_id)',
-        lazy='dynamic'
+        lazy='dynamic',
+        overlaps="friended_by,friends"  # Add overlaps to resolve warning
     )
     
-    # Update the profile relationship with explicit foreign_keys
+    # Update profile relationship with unique backref name
     profile = db.relationship('Profile', 
-                            backref='user', 
-                            uselist=False,
+                            backref=db.backref('user_profile', uselist=False), 
                             foreign_keys='Profile.user_id')
     
     subscription = db.relationship('Subscription', backref='user', uselist=False)

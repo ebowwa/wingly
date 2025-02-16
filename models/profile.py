@@ -95,8 +95,8 @@ class Profile(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    # Use string reference instead of direct import
-    user = db.relationship('User', back_populates='profile')
+    # Use unique backref name to avoid conflict
+    user = db.relationship('User', backref='user_profile')
     
     # Telegram user relationship - use string reference
     telegram_user_id = db.Column(db.Integer, db.ForeignKey('telegram_users.id'))
