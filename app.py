@@ -20,6 +20,10 @@ from fastapi.responses import Response
 from services.s3 import s3_service
 
 from routers.auth_router import auth_router, jwt
+# from routers.admin_router import admin_router
+from routers.gemini_router import gemini_router
+from routers.socket import socket_router
+from models.user import db, User
 
 async def process_voice_message(media_url: str) -> str:
     """Process voice messages using existing audio processing pipeline."""
@@ -46,10 +50,6 @@ async def download_media(url: str) -> bytes:
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             return await response.read()
-
-# from routers.admin_router import admin_router
-from routers.gemini_router import gemini_router
-from models.user import db, User
 
 # Configure logging
 logging.basicConfig(
@@ -82,6 +82,7 @@ app.register_blueprint(auth_router, url_prefix='/auth')
 
 # Register FastAPI routers
 fastapi_app.include_router(gemini_router, prefix="/api")
+fastapi_app.include_router(socket_router, prefix="/api")
 
 @fastapi_app.post("/webhook/twilio")
 @app.post("/twilio-webhook")

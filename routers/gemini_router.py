@@ -9,6 +9,7 @@
 # the combined length of all audio files in a prompt must not exceed 9.5 hours.
 import os
 import asyncio
+import json
 from fastapi import APIRouter, UploadFile, File, HTTPException, Query, FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,6 +29,10 @@ from utils.ai.gemini_chat_formatter import _format_chat_messages
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
+
+# Initialize the router
+router = APIRouter()
+
 # Load environment variables
 load_dotenv()
 
@@ -321,39 +326,11 @@ async def start_conversation():
     summary = "Here is a summary of the conversation."
     return summary
 
-# from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-# import json
-
 questions = [
     "Introduce yourself to your prospective partner.",
     "What are you looking for in a partner?",
     "What is your relationship vision?"
 ]
-
-@router.websocket("/conversation")
-async def conversation_endpoint(websocket: WebSocket):
-    """Handles an interactive conversation via WebSockets."""
-    await websocket.accept()
-    answers = []
-
-    try:
-        for question in questions:
-            await websocket.send_text(question)  # Ask the question
-            user_response = await websocket.receive_text()  # Wait for user reply
-            answers.append(user_response)  # Store the answer
-
-        # Generate the final summary
-        summary = {
-            "Summary": {
-                "Introduction": answers[0],
-                "Looking for": answers[1],
-                "Vision": answers[2]
-            }
-        }
-        await websocket.send_text(json.dumps(summary, indent=2))  # Send summary
-
-    except WebSocketDisconnect:
-        print("User disconnected")
 
 
 # Export the router at the bottom
