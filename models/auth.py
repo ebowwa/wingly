@@ -51,6 +51,9 @@ class User(db.Model):
     )
     
     # Updated Social Relationships
+    # Admin relationship
+    admin = db.relationship('Admin', back_populates='user', uselist=False)
+    
     friendships = db.relationship('Friendship',
         primaryjoin='or_(User.id==Friendship.user_id, User.id==Friendship.friend_id)',
         lazy='dynamic'
