@@ -64,7 +64,7 @@ class ConfigLoader:
 
 if __name__ == "__main__":
     # Initialize the config loader
-    loader = ConfigLoader('/Users/ebowwa/caringmind/backend/v3/configs')
+    loader = ConfigLoader('configs')
     
     # Load the default transcription config
     config = loader.load_config('default_transcription')

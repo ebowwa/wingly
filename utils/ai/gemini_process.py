@@ -40,9 +40,9 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 # Path to the configs directory
 CONFIGS_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
-    '/Users/ebowwa/wingly/configs'
-)  # 'v3' is removed with the mv to services from root
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+    'configs'
+)  # Points to root configs directory
 
 # Initialize the ConfigLoader
 config_loader = ConfigLoader(CONFIGS_DIR)

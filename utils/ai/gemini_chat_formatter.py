@@ -195,12 +195,12 @@ if __name__ == "__main__":
         {
             "role": "user",
             "content": "Please analyze this audio.",
-            "audio": "/Users/ebowwa/caringmind/public/audio-samples/Elijah_October_27_2024_9__59PM.ogg"
+            "audio": "audio-samples/Elijah_October_27_2024_9__59PM.ogg"
         },
         {
             "role": "user",
             "content": "And now this image.",
-            "image": "/Users/ebowwa/caringmind/public/caringmind-logo/CircleIcon.png"
+            "image": "caringmind-logo/CircleIcon.png"
         }
     ]
     

@@ -7,7 +7,7 @@ import logging
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.wsgi import WSGIMiddleware
 
 

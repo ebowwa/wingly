@@ -71,7 +71,7 @@ if __name__ == "__main__":
     messages = [
         {"role": "user", "content": "Hello {{ name }}! {{ prompt_text }}"},
         {"role": "assistant", "content": "Your previous truth was: '{{ truth }}'. Now, let's continue our conversation."},
-        {"role": "user", "content": "Please analyze this audio.", "audio": "/Users/ebowwa/caringmind/public/audio-samples/Elijah_October_27_2024_9__59PM.ogg"},
+        {"role": "user", "content": "Please analyze this audio.", "audio": "audio-samples/Elijah_October_27_2024_9__59PM.ogg"},
     ]
     
     # Example variables

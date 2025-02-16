@@ -53,7 +53,7 @@ class ProcessLLMRequestContent:
 
 if __name__ == "__main__":
     # Example usage
-    audio_path = "/Users/ebowwa/wingly/audio-samples/Elijah_October_27_2024_9__59PM.ogg"
+    audio_path = "audio-samples/Elijah_October_27_2024_9__59PM.ogg"
     
     # Example 1: Basic usage without speaker
     basic_request = ProcessLLMRequestContent(
