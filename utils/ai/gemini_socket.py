@@ -1,5 +1,5 @@
 import asyncio
-from google import genai
+import google.generativeai as genai  # Changed import
 import json
 from dotenv import load_dotenv
 import os
@@ -9,20 +9,17 @@ ResponseType = Literal["TEXT", "AUDIO"]
 VoiceName = Literal["Aoede", "Charon", "Fenrir", "Kore", "Puck"]
 
 class GeminiWebSocket:
-    def __init__(self, api_key: str, model_id: str = "gemini-2.0-flash-exp") -> None:
-        self.client: genai.Client = genai.Client(
-            api_key=api_key, 
-            http_options={'api_version': 'v1alpha'}
-        )
-        self.model_id: str = model_id
+    def __init__(self, api_key: str, model_id: str = "gemini-pro") -> None:
+        genai.configure(api_key=api_key)
+        self.model = genai.GenerativeModel(model_id)
         
     async def create_session(
         self, 
         response_type: ResponseType = "TEXT", 
         voice_name: Optional[VoiceName] = None
-    ) -> genai.live.Session:
+    ) -> genai.GenerativeModel:
         """Initialize a session with specified response type and voice settings"""
-        config: dict[str, list[str] | dict] = {
+        config = {
             "responseModalities": [response_type],
         }
         
@@ -35,10 +32,7 @@ class GeminiWebSocket:
                 }
             }
         
-        return await self.client.aio.live.connect(
-            model=self.model_id,
-            config=config
-        )
+        return self.model
 
     async def chat_session(
         self, 
@@ -46,29 +40,20 @@ class GeminiWebSocket:
         voice_name: Optional[VoiceName] = None
     ) -> None:
         """Run an interactive chat session with configurable response type"""
-        async with await self.create_session(response_type, voice_name) as session:
-            print(f"Session started with {response_type} response type")
-            if voice_name:
-                print(f"Using voice: {voice_name}")
-                
-            while True:
-                message: str = input("User> ")
-                if message.lower() in ["exit", "quit"]:
-                    break
-                
-                await session.send(input=message, end_of_turn=True)
-                
-                async for response in session.receive():
-                    if response_type == "TEXT":
-                        if response.text:
-                            print(response.text, end="")
-                    elif response_type == "AUDIO":
-                        if hasattr(response, 'audio'):
-                            print("Audio response received")
-                    
-                    if hasattr(response, 'interrupted') and response.interrupted:
-                        print("\nResponse interrupted by user")
-                        break
+        model = await self.create_session(response_type, voice_name)
+        chat = model.start_chat()
+        
+        print(f"Session started with {response_type} response type")
+        if voice_name:
+            print(f"Using voice: {voice_name}")
+            
+        while True:
+            message: str = input("User> ")
+            if message.lower() in ["exit", "quit"]:
+                break
+            
+            response = await chat.send_message_async(message)
+            print(response.text)
 
 if __name__ == "__main__":
     load_dotenv()

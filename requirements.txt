@@ -45,3 +45,4 @@ flask-jwt-extended
 flask_sqlalchemy
 psycopg2
 twilio
+google-genai
