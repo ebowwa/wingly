@@ -1,6 +1,9 @@
 # hanldes the flask auth and fastapi routes
 import os
 from dotenv import load_dotenv
+from fastapi import FastAPI, Request  # Add Request import here
+from fastapi.middleware.wsgi import WSGIMiddleware
+from fastapi.responses import Response
 
 load_dotenv()
 import logging
@@ -81,6 +84,7 @@ app.register_blueprint(auth_router, url_prefix='/auth')
 fastapi_app.include_router(gemini_router, prefix="/api")
 
 @fastapi_app.post("/webhook/twilio")
+@app.post("/twilio-webhook")
 async def twilio_webhook(request: Request):
     """Handle incoming Twilio messages."""
     try:
