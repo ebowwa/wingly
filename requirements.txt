@@ -47,3 +47,4 @@ psycopg2
 twilio
 google-genai
 python-telegram-bot
+telegram
