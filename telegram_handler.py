@@ -82,6 +82,69 @@ async def process_downloaded_file(file_path: str, mime_type: str) -> tuple[bool,
         }
         
         result = process_with_gemini(
+
+async def handle_name_input(update: Update, context: CallbackContext, audio_path: str):
+    """Process name input from voice message."""
+    user_id = update.message.from_user.id
+    
+    # Process with Gemini using name_input prompt type
+    result = await process_with_gemini(
+        audio_path=audio_path,
+        prompt_type="name_input"
+    )
+    
+    user_profiles[user_id] = {
+        "name_audio": audio_path,
+        "name_analysis": result
+    }
+    
+    # Format and send response
+    await update.message.reply_text(
+        f"I heard your introduction! Is this correct?\n\n"
+        f"{result['analysis']}\n\n"
+        "Please reply with 'yes' or 'no'."
+    )
+    user_states[user_id] = "awaiting_name_confirmation"
+
+async def handle_name_confirmation(update: Update, context: CallbackContext):
+    """Handle yes/no response for name confirmation."""
+    user_id = update.message.from_user.id
+    response = update.message.text.lower()
+    
+    if response == 'yes':
+        # Move to truth and lie game
+        await update.message.reply_text(
+            "Great! Now let's play Two Truths and a Lie!\n\n"
+            "Record a voice message with three statements - two true and one false.\n"
+            "Make them interesting! I'll try to guess which one is the lie."
+        )
+        user_states[user_id] = "awaiting_truthnlie"
+    else:
+        await update.message.reply_text(
+            "I apologize! Please type your correct full name as you spoke it in the audio."
+        )
+        user_states[user_id] = "awaiting_name_correction"
+
+async def handle_truthnlie(update: Update, context: CallbackContext, audio_path: str):
+    """Process truth and lie statements."""
+    user_id = update.message.from_user.id
+    
+    # Process with Gemini using truthnlie prompt type
+    result = await process_with_gemini(
+        audio_path=audio_path,
+        prompt_type="truthnlie"
+    )
+    
+    user_profiles[user_id]["truthnlie_audio"] = audio_path
+    user_profiles[user_id]["truthnlie_analysis"] = result
+    
+    await update.message.reply_text(
+        f"Here's my analysis of your statements:\n\n"
+        f"{result['analysis']}\n\n"
+        "Did I guess correctly? Reply with 'yes' or 'no'."
+    )
+    user_states[user_id] = "awaiting_truthnlie_confirmation"
+
             uploaded_files=uploaded_files,
             prompt_type="default_transcription",
             temperature=0.7,
@@ -126,8 +189,52 @@ async def format_response_for_telegram(response: str, response_type: str = "defa
         return f"Error formatting response: {str(e)}"
 
 # Update handle_private_message to use the new formatter
-async def handle_private_message(update: Update, context):
-    user_id = update.message.chat_id
+async def handle_private_message(update: Update, context: CallbackContext):
+    user_id = update.message.from_user.id
+    state = user_states.get(user_id, "awaiting_name_input")
+    
+    if update.message.voice:
+        file_path = f"voice_message_{user_id}.ogg"
+        success, result = await download_voice_message(update, user_id)
+        
+        if not success:
+            await update.message.reply_text("Sorry, I couldn't process your voice message.")
+            return
+            
+        if state == "awaiting_name_input":
+            await handle_name_input(update, context, file_path)
+        elif state == "awaiting_truthnlie":
+            await handle_truthnlie(update, context, file_path)
+            
+    elif update.message.text:
+        text = update.message.text.lower()
+        
+        if state == "awaiting_name_confirmation":
+            await handle_name_confirmation(update, context)
+        elif state == "awaiting_name_correction":
+            # Store corrected name and move to truth/lie
+            user_profiles[user_id]["corrected_name"] = update.message.text
+            await update.message.reply_text(
+                "Thanks for the correction! Now let's play Two Truths and a Lie!\n\n"
+                "Record a voice message with three statements - two true and one false."
+            )
+            user_states[user_id] = "awaiting_truthnlie"
+        elif state == "awaiting_truthnlie_confirmation":
+            if text == "yes":
+                # Complete the flow
+                await update.message.reply_text(
+                    "Amazing! I've learned so much about you through our conversation.\n\n"
+                    "Would you like to share this experience with a friend? They might enjoy it too!\n\n"
+                    "Join our waitlist to be notified when our app launches!"
+                )
+                # Store final profile data
+                user_states[user_id] = "completed"
+            else:
+                await update.message.reply_text(
+                    "I apologize for my mistake. Would you like to try the game again?\n"
+                    "Record a new voice message with your three statements."
+                )
+                user_states[user_id] = "awaiting_truthnlie"
     
     if update.message.voice:
         success, file_path = await download_voice_message(update, user_id)
@@ -197,14 +304,21 @@ async def handle_private_message(update: Update, context):
         await update.message.reply_text("An error occurred while processing your request.")
 
 
+# Store user states
+user_states = {}
+# Store user data
+user_profiles = {}
+
 async def start(update: Update, context):
-    """Sends a welcome message when the user starts the bot."""
+    """Initiates the onboarding flow."""
+    user_id = update.message.from_user.id
+    user_states[user_id] = "awaiting_name_input"
+    
     welcome_message = (
-        "- Send text messages for processing\n"
-        "- Send voice messages for analysis\n"
-        "- Send video content for processing\n"
-        "- Get AI-powered responses"
-        "Send me a message, and I will process it!"
+        "Welcome! Let's get to know each other. 👋\n\n"
+        "Please record a voice message introducing yourself with:\n"
+        "'Hi, my name is [your full name]'\n\n"
+        "Feel free to include any nicknames you go by!"
     )
     await update.message.reply_text(welcome_message)
 
@@ -256,9 +370,11 @@ if __name__ == "__main__":
     
     app = Application.builder().token(TOKEN).build()
     
-    app.add_handler(MessageHandler(filters.Command("start"), start))
+    # Register handlers
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", help))
     app.add_handler(MessageHandler(
-        (filters.TEXT | filters.VOICE | filters.VIDEO) & filters.ChatType.PRIVATE, 
+        (filters.TEXT | filters.VOICE) & filters.ChatType.PRIVATE,
         handle_private_message
     ))
     
