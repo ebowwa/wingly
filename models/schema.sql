@@ -21,7 +21,6 @@ CREATE TABLE profiles (
     goals TEXT,
     user_values TEXT,
     preferences TEXT,
-    notification_preferences TEXT,
     privacy_settings TEXT,
     voice_preferences TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -57,15 +56,6 @@ CREATE TABLE memory_owners (
     FOREIGN KEY (memory_id) REFERENCES memories(id)
 );
 
--- Memory shares association table
-CREATE TABLE memory_shares (
-    profile_id INTEGER,
-    memory_id INTEGER,
-    PRIMARY KEY (profile_id, memory_id),
-    FOREIGN KEY (profile_id) REFERENCES profiles(id),
-    FOREIGN KEY (memory_id) REFERENCES memories(id)
-);
-
 -- Media assets table
 CREATE TABLE media_assets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,7 +74,6 @@ CREATE TABLE media_assets (
 CREATE TABLE ai_requests (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     profile_id INTEGER,
-    is_anonymous INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     endpoint TEXT,
     prompt_type TEXT,
@@ -109,25 +98,7 @@ CREATE TABLE ai_requests (
     FOREIGN KEY (profile_id) REFERENCES profiles(id)
 );
 
--- Tutorial memories table
-CREATE TABLE tutorial_memories (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    profile_id INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    step TEXT,
-    input_text TEXT,
-    response_text TEXT,
-    media_asset_id INTEGER,
-    ai_request_id INTEGER,
-    completed INTEGER DEFAULT 0,
-    completion_time TIMESTAMP,
-    FOREIGN KEY (profile_id) REFERENCES profiles(id),
-    FOREIGN KEY (media_asset_id) REFERENCES media_assets(id),
-    FOREIGN KEY (ai_request_id) REFERENCES ai_requests(id)
-);
-
 -- Indexes
 CREATE INDEX idx_profiles_user_id ON profiles(user_id);
 CREATE INDEX idx_media_assets_memory_id ON media_assets(memory_id);
 CREATE INDEX idx_ai_requests_profile_id ON ai_requests(profile_id);
-CREATE INDEX idx_tutorial_memories_profile_id ON tutorial_memories(profile_id);

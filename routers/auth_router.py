@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     get_jwt,
     JWTManager
 )
-from models.user import User, db
+from models.auth import User, db
 from datetime import datetime
 
 auth_router = Blueprint('auth', __name__)

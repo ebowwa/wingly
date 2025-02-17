@@ -14,29 +14,38 @@
         "properties": {
           "diarization_html": {
             "type": "string",
-            "description": "HTML structure indicating the speaker label."
+            "description": "HTML structure indicating the speaker label.",
+            "value": "<h3>Speaker 1</h3>"
           },
           "transcription_html": {
             "type": "string",
-            "description": "HTML structure for the verbatim transcription."
+            "description": "HTML structure for the verbatim transcription.",
+            "value": "<p>Hi, my name is Elijah Cornelius Arbee.</p>"
           },
           "timestamps_html": {
             "type": "string",
-            "description": "HTML structure indicating approximate time range."
+            "description": "HTML structure indicating approximate time range.",
+            "value": "<p>00:00-00:05</p>"
           },
           "tone_analysis": {
             "type": "object",
             "properties": {
               "tone": {
                 "type": "string",
-                "description": "The dominant tone identified."
+                "description": "The dominant tone identified.",
+                "value": "Neutral"
               },
               "indicators": {
                 "type": "array",
                 "description": "Supporting details for the identified tone.",
                 "items": {
                   "type": "string"
-                }
+                },
+                "value": [
+                  "Clear and concise speech.",
+                  "Even pace and volume.",
+                  "Lack of emotional inflection."
+                ]
               }
             },
             "required": [
@@ -46,11 +55,13 @@
           },
           "confidence": {
             "type": "number",
-            "description": "Confidence score for the tone detection."
+            "description": "Confidence score for the tone detection.",
+            "value": 0.95
           },
           "summary": {
             "type": "string",
-            "description": "Concise summary of the speaker's contribution."
+            "description": "Concise summary of the speaker's contribution.",
+            "value": "The speaker introduces himself with his full name."
           }
         },
         "required": [
@@ -61,24 +72,7 @@
           "confidence",
           "summary"
         ]
-      },
-      "value": [
-        {
-          "diarization_html": "<h3>Speaker 1</h3>",
-          "transcription_html": "<p>Hi, my name is Elijah Cornelius Arbee.</p>",
-          "timestamps_html": "<p>00:00-00:03</p>",
-          "tone_analysis": {
-            "tone": "Neutral",
-            "indicators": [
-              "Clear and concise speech",
-              "Even pace",
-              "Lack of emotional inflection"
-            ]
-          },
-          "confidence": 0.95,
-          "summary": "The speaker introduces himself."
-        }
-      ]
+      }
     }
   },
   "required": [

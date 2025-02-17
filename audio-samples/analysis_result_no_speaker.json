@@ -20,12 +20,12 @@
           "transcription_html": {
             "type": "string",
             "description": "HTML structure for the verbatim transcription.",
-            "value": "<h3>Hi, my name is Elijah Cornelius Arbi.</h3>"
+            "value": "<p>Hi, my name is Elijah Cornelius Arby.</p>"
           },
           "timestamps_html": {
             "type": "string",
             "description": "HTML structure indicating approximate time range.",
-            "value": "<h3>00:00-00:04</h3>"
+            "value": "<p>00:00-00:04</p>"
           },
           "tone_analysis": {
             "type": "object",
@@ -42,8 +42,8 @@
                   "type": "string"
                 },
                 "value": [
-                  "Clear and concise introduction.",
-                  "Even pace of speech.",
+                  "Clear and concise speech.",
+                  "Even pace and volume.",
                   "Lack of emotional inflection."
                 ]
               }
@@ -61,7 +61,7 @@
           "summary": {
             "type": "string",
             "description": "Concise summary of the speaker's contribution.",
-            "value": "The speaker introduces himself with his full name: Elijah Cornelius Arbi."
+            "value": "The speaker introduces himself with his full name."
           }
         },
         "required": [

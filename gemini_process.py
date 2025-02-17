@@ -7,15 +7,6 @@ import json
 import os
 import datetime
 # Add this import to the gemini_config imports
-from utils.ai.gemini_config import (
-    GeminiPart,
-    GeminiInlinePart,
-    GeminiContent,
-    GeminiRequest,
-    PromptSchema,
-    GeminiHTTPException  # Add this
-)
-
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
 from typing import Dict, List, Union, Any, TypedDict
@@ -25,7 +16,14 @@ from utils.ai.extract_json_from_response import extract_json_from_response
 from utils.ai.json_prompt_types_loader import ConfigLoader
 from utils.ai.gemini_config import (GeminiPart, GeminiInlinePart,
                                     GeminiContent, GeminiRequest, PromptSchema)
-
+from utils.ai.gemini_config import (
+    GeminiPart,
+    GeminiInlinePart,
+    GeminiContent,
+    GeminiRequest,
+    PromptSchema,
+    GeminiHTTPException  # Add this
+) # utils.ai.
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -41,7 +39,7 @@ genai.configure(api_key=GOOGLE_API_KEY)
 # Path to the configs directory
 CONFIGS_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-    'configs'
+    'ebowwa/wingly/configs'
 )  # Points to root configs directory
 
 # Initialize the ConfigLoader
