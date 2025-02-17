@@ -78,13 +78,3 @@ User Interaction: The interaction relies heavily on voice inputs that are conver
 Data Storage and Retrieval: The audio and derived insights are stored and structured for future access and user interaction optimization.
 In summary, this documentation outlines the design and function of a Telegram bot that interacts with users through audio inputs, processes these inputs using AI, confirms and corrects data through user feedback, and stores insights for enhanced user engagement.
 
-
-"""
-
-# save results as user profile
-
-# index embeddings of results
-# - map to user profile
-
-# rank similarities of results and process (audio files and results) of similar users
-# - audi files are saved to s3 bucket
